@@ -1,0 +1,24 @@
+/*
+ * sirloin-sandbox-server
+ * Distributed under CC BY-NC-SA
+ */
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+apply from: "$project.rootDir/gradle/scripts/packaging.gradle"
+
+detekt {
+    def buildConfig = getBuildConfig()
+
+    toolVersion = "$version_detekt"
+    config = files("$project.rootDir/gradle/scripts/settings/detekt.yml")
+    input = files(
+            "src/main/java",
+            "src/main/kotlin",
+            "src/$buildConfig/java",
+            "src/$buildConfig/kotlin"
+    )
+}
+
+dependencies {
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$version_detekt"
+}

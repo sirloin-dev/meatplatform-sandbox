@@ -1,0 +1,13 @@
+==== 요청 필드
+|===
+|필드명|타입|생략가능?|설명
+
+{{#fields}}
+|{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
+|{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{#optional}}O{{/optional}}{{^optional}}X{{/optional}}{{/tableCellContent}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+
+{{/fields}}
+
+|===

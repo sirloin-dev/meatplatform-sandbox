@@ -1,0 +1,9 @@
+/*
+ * sirloin-sandbox-server
+ * Distributed under CC BY-NC-SA
+ */
+rootProject.name = "com.sirloin.sandbox.server"
+
+include ":api-core",
+        ":api-core-infra-impl",
+        ":api-main"

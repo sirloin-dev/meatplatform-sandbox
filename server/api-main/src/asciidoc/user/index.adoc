@@ -1,0 +1,132 @@
+= V1 User API
+// Metadata:
+:description: user V1 API documentation
+:keywords: v1, user
+// Settings:
+:doctype: book
+:toc: left
+:toclevels: 4
+:sectlinks:
+:icons: font
+:idprefix:
+:idseparator: -
+// Refs
+:api-base: user
+:api-create: {api-base}/CreateUserApiSpec
+:api-get: {api-base}/GetUserApiSpec
+:api-patch: {api-base}/UpdateUserApiSpec
+:api-delete: {api-base}/DeleteUserApiSpec
+
+[[overview]]
+== Overview
+
+`/user` 로 시작하는 모든 API 의 목록입니다.
+
+[[api-list]]
+== API 목록
+
+[[api-user-create]]
+=== POST `/user`
+
+이용자를 생성하는 API
+
+include::{api-create}/userCreated/request-fields.adoc[]
+
+include::{api-create}/userCreated/response-fields.adoc[]
+
+==== Example request
+include::{api-create}/userCreated/http-request.adoc[]
+
+==== Example Response
+include::{api-create}/userCreated/http-response.adoc[]
+
+==== 예외 목록
+
+|===
+| HTTP Code | Error Code | 이유
+
+| `+400+`
+| `+0x00000001+`
+| nickname 의 길이가 2자 미만이거나, 32자를 초과
+|===
+
+[[api-user-get]]
+=== GET `/user/\{uuid\}`
+
+생성한 이용자를 찾는 API
+
+include::{api-get}/getExistingUser/response-fields.adoc[]
+
+==== Example request
+include::{api-get}/getExistingUser/http-request.adoc[]
+
+==== Example Response
+include::{api-get}/getExistingUser/http-response.adoc[]
+
+==== 예외 목록
+
+|===
+| HTTP Code | Error Code | 이유
+
+| `+400+`
+| `+0x00000001+`
+| Path parameter 가 올바른 UUID 형식이 아님
+
+| `+404+`
+| `+0x10000000+`
+| 지정한 UUID 에 해당하는 이용자가 없음
+|===
+
+[[api-user-update]]
+=== PATCH `/user/\{uuid\}`
+
+생성한 이용자의 정보를 수정하는 API
+
+include::{api-patch}/userInfoUpdated/request-fields.adoc[]
+
+include::{api-patch}/userInfoUpdated/response-fields.adoc[]
+
+==== Example request
+include::{api-patch}/userInfoUpdated/http-request.adoc[]
+
+==== Example Response
+include::{api-patch}/userInfoUpdated/http-response.adoc[]
+
+==== 예외 목록
+
+|===
+| HTTP Code | Error Code | 이유
+
+| `+400+`
+| `+0x00000001+`
+| Path parameter 가 올바른 UUID 형식이 아님
+
+| `+404+`
+| `+0x10000000+`
+| 지정한 UUID 에 해당하는 이용자가 없음
+|===
+
+[[api-user-delete]]
+=== DELETE `/user/\{uuid\}`
+
+생성한 이용자를 삭제하는 API
+
+include::{api-delete}/deleteExistingUser/response-fields.adoc[]
+
+==== Example request
+include::{api-delete}/deleteExistingUser/http-request.adoc[]
+
+==== Example Response
+include::{api-delete}/deleteExistingUser/http-response.adoc[]
+
+|===
+| HTTP Code | Error Code | 이유
+
+| `+400+`
+| `+0x00000001+`
+| Path parameter 가 올바른 UUID 형식이 아님
+
+| `+404+`
+| `+0x10000000+`
+| 지정한 UUID 에 해당하는 이용자가 없음
+|===

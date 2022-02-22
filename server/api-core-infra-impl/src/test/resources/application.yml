@@ -1,0 +1,16 @@
+#
+# sirloin-sandbox-server
+# Distributed under CC BY-NC-SA
+#
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: sirloin-sandbox-server
+  profiles:
+    active: test
+
+logging:
+  level:
+    ROOT: INFO
+    com.sirloin.sandbox.server: DEBUG

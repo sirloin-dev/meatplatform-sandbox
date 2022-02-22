@@ -1,0 +1,43 @@
+/*
+ * sirloin-sandbox-server
+ * Distributed under CC BY-NC-SA
+ */
+// POINT: 왜 굳이, 불편하게 core-infra-impl 모듈을 별도로 나눴을까요?
+version "0.1.1"
+
+apply plugin: "kotlin-spring"
+apply plugin: "kotlin-allopen"
+
+apply from: "${project.rootDir}/gradle/scripts/mavenPublishing.gradle"
+
+jar {
+    enabled = true
+}
+
+def MODULE_CORE = "api-core"
+
+dependencies {
+    // Spring dependencies
+    implementation "org.springframework.boot:spring-boot-starter:$version_springBoot"
+    implementation "org.springframework.boot:spring-boot-starter-validation:$version_springBoot"
+    implementation "org.springframework.data:spring-data-jdbc:$version_springDataJdbc"
+
+    // Spring Data
+    implementation "org.springframework:spring-tx"
+    implementation "com.zaxxer:HikariCP:$version_hikariCP"
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$version_springBootTest") {
+        exclude group: "com.vaadin.external.google", module: "android-json"
+    }
+
+    /*
+     * Test 에서만 사용할 메모리 database 이지만 test runtime 에서도 쓸 수 있어야 한다.
+     * 실제 빌드 결과에 반영되면 안되기 때문에 runtimeOnly 로 의존성 선언해 준다.
+     */
+    runtimeOnly "com.h2database:h2:$version_h2database"
+
+    // Project dependencies
+    implementation project(":${MODULE_CORE}")
+
+    testImplementation project(path: ":${MODULE_CORE}", configuration: "testArtifacts")
+}

@@ -1,0 +1,20 @@
+# System-dependent autogen file
+.DS_Store
+desktop.ini
+
+# Build outputs
+.gradle
+build
+out
+bin
+
+# IDE specific files
+.idea
+.project
+
+# Automatic build number generation
+build_number.properties
+api-main/src/main/resources/build_api-main.json
+
+# Application config
+/application.yml

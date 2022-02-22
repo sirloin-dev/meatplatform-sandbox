@@ -1,0 +1,223 @@
+= Sir.LOIN Sandbox Server
+Hwan Jo <hwan.cho@sirloin.co.kr>
+// Metadata:
+:description: sirloin-sandbox-server
+:keywords: kotlin, spring
+// Settings:
+:doctype: book
+:toc: left
+:toclevels: 4
+:sectlinks:
+:icons: font
+// Refs:
+:link-repo-base: https://github.com/sirloin-dev/sirloin-jvmlib
+:link-repo-test: {link-repo-base}/tree/main/sirloin-jvmlib-test/src/main/kotlin/test/com/sirloin/annotation
+:link-tool-gradle: https://gradle.org/
+:link-lang-jdk: https://openjdk.java.net/
+:link-lang-kotlin: https://kotlinlang.org/
+
+[[overview]]
+== 들어가기
+
+마지막 수정 일자: 2022년 02월 17일
+
+Sir.LOIN 플랫폼팀 백엔드 개발자용 Sandbox Project 입니다. 이 문서는 IntelliJ IDEA 기준으로 작성했습니다.
+
+[[coding-style]]
+== 공통 코딩 스타일 적용
+
+Project root 에 IntelliJ IDEA 용 link:sirloin-coding-sytles.xml[] 파일이 있습니다. Detekt 설정과 코딩 스타일 충돌로 빌드가 실패한다면 다음 순서로 코딩 스타일 파일을 적용해주세요.
+
+. File > Settings 메뉴 진입
+. Editor > Code Styles 설정 항목 진입
+. 화면 최상단 `Scheme:` 옆의 톱니바퀴 아이콘 클릭
+. Import Scheme > IntelliJ IDEA code style XML 클릭
+. 파일 선택 창에서 `sirloin-coding-sytles.xml` 파일 선택
+. 팝업 창에서 Scheme 이름을 `Sirloin Code Styles` 로 지정 후 적용 완료
+
+== 빌드 및 실행
+
+이 프로젝트는 `api-main` 어플리케이션을 실행하는 프로젝트입니다. 빌드 방법은 다음과 같습니다.
+
+모든 shell 명령은 프로젝트 root 에서 실행하는 것으로 가정하고 설명합니다.
+
+=== 빌드하기
+
+==== 1. `api-main` 빌드하기
+
+[source,shell]
+----
+$ ./gradlew :api-main:assemble
+----
+
+==== 2. `api-core`, `api-core-infra-impl` 빌드하기
+
+`api-core`, `api-core-infra-impl` 모듈은 다른 프로젝트에서 라이브러리 형태로도 활용합니다. 라이브러리용 jar 파일을 만들기 위한 task 들은 각각 다음과 같습니다.
+
+. jar 및 source file jar 파일 빌드
++
+[source,shell]
+----
+$ ./gradlew :api-core:jar :api-core:sourcesJar
+----
+
+. test jar 파일 빌드
++
+[source,shell]
+----
+$ ./gradlew :api-core:testJar :api-core:testSourcesJar
+----
+
+=== 실행하기
+
+==== 테스트 실행
+
+테스트는 규모에 따라 크게 link:{link-repo-test}/SmallTest.kt[SmallTest], link:{link-repo-test}/MediumTest.kt[MediumTest], link:{link-repo-test}/LargeTest.kt[LargeTest] 로 분류합니다. 각각의 테스트 분류 기준은 링크를 눌러 확인해주세요.
+
+. 전체 테스트 실행
++
+[source,shell]
+----
+$ ./gradlew test
+----
+
+. 개별 모듈만 테스트 실행
++
+전체 테스트는 실행이 오래 걸리기 때문에, 자주 실행하기 어렵습니다. 따라서 모듈명과, 테스트 규모를 구체적으로 입력하면 원하는 테스트만 실행할 수 있습니다.
++
+[source,shell]
+----
+$ ./gradlew :<api-main|api-core|api-core-infra-impl>:<test|smallTest|mediumTest|largetTest>
+----
++
+가령, `api-core` 의 Small test 들만 실행하려면 아래와 같이 입력하시면 됩니다.
++
+[source,shell]
+----
+$ ./gradlew :api-core:smallTest
+----
+
+==== API 서버 실행
+
+[source,shell]
+----
+$ java -jar api-main/build/libs/api-main-<버전명>.jar
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.6.3)
+
+2022-02-17 14:36:49.480  INFO 73553 --- [           main] com.sirloin.sandbox.server.api.ApplicationKt                 : Starting ApplicationKt using Java 17.0.2 on localhost with PID 73553 (api-main-0.1.1.jar started by root in /app)
+2022-02-17 14:36:50.039  INFO 73553 --- [           main] com.sirloin.sandbox.server.api.appconfig.AppConfig           : Build configurations -
+2022-02-17 14:36:50.039  INFO 73553 --- [           main] com.sirloin.sandbox.server.api.appconfig.AppConfig           :   Version:     0.1.37
+2022-02-17 14:36:50.039  INFO 73553 --- [           main] com.sirloin.sandbox.server.api.appconfig.AppConfig           :   Fingerprint: eefc698
+2022-02-17 14:36:50.039  INFO 73553 --- [           main] com.sirloin.sandbox.server.api.appconfig.AppConfig           :   Profile:     LOCAL
+----
+
+위 문서와 다르게 아무 것도 나오지 않는다면 <<troubleshoot_no_logs>> 를 참고하시기 바랍니다.
+
+=== 코드 품질 측정
+
+높은 코드 품질을 유지하는 일은 매우 중요합니다. 우리 프로젝트는 일관성 있는 코드 스타일을 유지하기 위해 `detekt` 라는 도구를 활용합니다.
+
+==== Detekt 실행하기
+
+[source,shell]
+----
+$ ./gradlew detekt
+
+> Task :api-core:detekt FAILED
+api-core/src/main/kotlin/com/sirloin/sandbox/server/core/domain/user/repository/UserReadonlyRepository.kt:3:34: The class or object UserReadonlyRepository is empty. [EmptyClassBlock]
+
+empty-blocks - 5min debt
+        EmptyClassBlock - [UserReadonlyRepository] at api-core/src/main/kotlin/com/sirloin/sandbox/server/core/domain/user/repository/UserReadonlyRepository.kt:3:34
+----
+
+또한 우리 프로젝트에서는 warning 을 허용하지 않고 있습니다. 경고를 해제하기 위해 `@SuppressWarnings`(Java), `@Suppress`(Kotlin) 어노테이션을 쓸 때는 반드시 경고 해제의 이유를 아래와 같은 스타일로 명시해 주시기 바랍니다.
+
+[source,kotlin]
+----
+interface User : DateAuditable, Versioned<Long> {
+    // ...
+    companion object {
+        internal data class Model(
+            // ...
+        )
+
+        // 도메인 객체 생성에 여러 필드가 필요하기 때문에 불가피
+        @Suppress("LongParameterList")
+        fun create(
+            // ...
+        ) : User
+    }
+}
+----
+
+경고 해제의 이유는 모든 사람이 충분히 납득할 수 있어야 합니다.
+
+==== API Document 자동 생성
+
+`api-main` 모듈 내의 `testcase.large` 패키지에 `@LargeTest` 들을 모아뒀습니다. 또한 Large test 과정 동안 실제 API 호출 및 그 결과를 Spring RESTDocs 를 이용해 문서화합니다. 따라서, API 문서를 자동 생성하려면 `largeTest` 를 함께 실행해야 합니다.
+
+[source,shell]
+----
+$ ./gradlew :api-main:largeTest :api-main:asciidoctor
+
+> Configure project :
+:com.sirloin.sandbox.server: No 'buildConfig' property is specified - 'local' is used by default
+
+> Configure project :api-main
+Building for 'local' environment
+
+> Task :api-main:asciidoctor
+
+BUILD SUCCESSFUL in 3s
+1 actionable task: 1 executed
+----
+
+asciidoc 문서 템플릿은 `src/asciidoc` 디렉토리 아래에 있습니다.
+
+문서 생성 및 자세한 동작 과정은 테스트 코드를 참고하시기 바랍니다.
+
+== 모듈 구성 및 설명
+
+. `api-main`: Spring boot 어플리케이션을 실행하기 위한 모듈입니다. 아래 기술들을 활용하고 있습니다.
+  * spring-boot-starter
+  * spring-boot-starter-validation
+  * spring-boot-starter-web
+  * spring-boot-starter-undertow
+  * spring-security-web
+  * spring-boot-starter-test
+  * spring-restdocs-core
+  * spring-restdocs-restassured
+  * spring-restdocs-asciidoctor
+
+. `api-core`: 핵심 비즈니스 로직을 담아둔 모듈입니다. 재활용을 위해 이식성이 높은 코드를 작성해야 합니다.
+  * sirloin-jvmlibs 시리즈
+
+. `api-core-infra-impl`: api-core 가 실제 동작하는 인프라스트럭쳐 코드 모음입니다.
+  * spring-boot-starter
+  * spring-boot-starter-validation
+  * spring-data-jdbc
+  * spring-tx
+  * HikariCP
+
+[[troubleshoot]]
+== 문제가 있나요?
+
+[[troubleshoot_no_logs,로그가 출력되지 않아요!]]
+=== 1. 로그가 출력되지 않아요!
+
+프로젝트 최초 시작 후, 루트 디렉토리의 `application.yml.sample` 을 복사해서 `application.yml` 로 파일을 생성해주세요. 그리고, 아래의 logback 설정을 확인해 주시기 바랍니다.
+
+[source,yaml]
+----
+logging:
+  level:
+    ROOT: INFO
+    com.sirloin.sandbox.api: DEBUG
+----

@@ -1,0 +1,54 @@
+/*
+ * sirloin-sandbox-server
+ * Distributed under CC BY-NC-SA
+ */
+apply plugin: "org.asciidoctor.jvm.convert"
+
+dependencies {
+    def MODULE_CORE = "api-core"
+
+    // Project dependencies
+    testImplementation project(path: ":${MODULE_CORE}", configuration: "testArtifacts")
+
+    // Spring boot test
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$version_springBootTest") {
+        exclude group: "com.vaadin.external.google", module: "android-json"
+    }
+
+    // REST Assured
+    testImplementation "org.springframework.restdocs:spring-restdocs-core:$version_restDocs"
+    testImplementation "org.springframework.restdocs:spring-restdocs-restassured:$version_restDocs"
+    testImplementation "org.springframework.restdocs:spring-restdocs-asciidoctor:$version_restDocs"
+}
+
+
+asciidoctor {
+    final String snippetsDir = "${project.buildDir}/generated-snippets"
+    final String frameDocsDir = "${project.rootDir}/${project.name}/src/asciidoc"
+    final String htmlOutputDir = "${project.buildDir}/docs"
+    /*
+     * asciidoctor task(버전 3.3.2) 에 한개의 input directory 만 지정할 수 있어 수동작성한 Document frame 을
+     * 문서화 할 수 없는 문제가 있다. 따라서 asciidoctor 실행 전에 document 들을 largeTest 실행결과로
+     * 생성한 build/generated-snippets 디렉토리에 복사한다.
+     */
+    copy {
+        from frameDocsDir
+        into snippetsDir
+    }
+
+    // asciidoctor task 환경 설정
+    baseDir snippetsDir
+    sourceDir snippetsDir
+    outputDir htmlOutputDir
+
+    /*
+     * 이 옵션을 적용하더라도 Windows 시스템에서 인코딩 문제로 문서를 제대로 생성하지 못하는 경우가 있습니다.
+     * 그때는 제어판 > 고급 > 환경 변수... 메뉴에 진입 후 아래 환경변수를 추가해 주세요.
+     *
+     * set JAVA_OPTS=-Dfile.encoding=UTF-8
+     * set GRADLE_OPTS=-Dfile.encoding=UTF-8
+     *
+     * 그리고 시스템을 재부팅 해주시기 바랍니다.
+     */
+    options.encoding = "UTF-8"
+}
