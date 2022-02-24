@@ -1,7 +1,4 @@
-= Licencing
-Hwan Jo <hwan.cho@sirloin.co.kr>
-
-== Sir.LOIN Sandbox Project 이용허락 규약 안내
+= Sir.LOIN Sandbox Project 라이선스 안내
 
 이 소프트웨어는 크리에이티브커먼즈 CC BY-NC-SA 라이선스를 적용받습니다. 즉,
 
@@ -12,7 +9,3 @@ Hwan Jo <hwan.cho@sirloin.co.kr>
 라이선스에 관한 상세한 설명은 link:http://ccl.cckorea.org/about/[크리에이티브 커먼즈] 홈페이지를 참고하세요.
 
 저작권 (c) 2022, Sir.LOIN. 모든 권리 보유.
-
-== 기여자 목록
-
-이 소프트웨어를 만드는데 도움을 주신 고마운 분들을 소개합니다.
