@@ -10,5 +10,3 @@ interface CoreApplication {
         const val PACKAGE_NAME = "com.sirloin.sandbox.server.core"
     }
 }
-
-internal class CoreApplicationImpl : CoreApplication

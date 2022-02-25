@@ -4,7 +4,6 @@
  */
 package com.sirloin.sandbox.server.core.domain.user
 
-import com.sirloin.jvmlib.time.truncateToSeconds
 import com.sirloin.sandbox.server.core.model.DateAuditable
 import com.sirloin.sandbox.server.core.model.Editable
 import com.sirloin.sandbox.server.core.model.Versioned
@@ -46,7 +45,7 @@ interface User : DateAuditable, Versioned<Long>, Editable<User> {
 
         override fun edit(): Editor = this
 
-        fun delete(instant: Instant = Instant.now().truncateToSeconds()): Editor {
+        fun delete(instant: Instant = Instant.now()): Editor {
             this.updatedAt = instant
             this.deletedAt = instant
             return this
@@ -78,15 +77,15 @@ interface User : DateAuditable, Versioned<Long>, Editable<User> {
             updatedAt: Instant? = null,
             version: Long? = null
         ): User {
-            val now = Instant.now().truncateToSeconds()
+            val now = Instant.now()
 
             return Model(
                 uuid = uuid ?: UUID.randomUUID(),
                 nickname = nickname,
                 profileImageUrl = profileImageUrl,
-                deletedAt = deletedAt?.truncateToSeconds(),
-                createdAt = createdAt?.truncateToSeconds() ?: now,
-                updatedAt = updatedAt?.truncateToSeconds() ?: now,
+                deletedAt = deletedAt,
+                createdAt = createdAt ?: now,
+                updatedAt = updatedAt ?: now,
                 version = version ?: Versioned.DEFAULT_LONG_INT
             )
         }
@@ -96,9 +95,9 @@ interface User : DateAuditable, Versioned<Long>, Editable<User> {
                 uuid = uuid,
                 nickname = nickname,
                 profileImageUrl = profileImageUrl,
-                deletedAt = deletedAt?.truncateToSeconds(),
-                createdAt = createdAt.truncateToSeconds(),
-                updatedAt = updatedAt.truncateToSeconds(),
+                deletedAt = deletedAt,
+                createdAt = createdAt,
+                updatedAt = updatedAt,
                 version = version
             )
         }
