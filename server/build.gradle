@@ -18,6 +18,9 @@ buildscript {
         version_springDataJdbc = "2.3.2"
         version_hikariCP = "5.0.1"
 
+        // MySQL
+        version_mysql = "8.0.28"
+
         // Library
         version_jackson_kotlin = "2.13.1"
         version_sirloin_jvmlib = "1.0.1"

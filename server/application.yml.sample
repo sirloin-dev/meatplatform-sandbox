@@ -21,6 +21,10 @@ spring:
     schema: classpath:/sql/v1.0/schema/*.sql
     # data: classpath:/sql/v1.0/data/*.sql
     type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8306/sirloin_sandbox?serverTimezone=UTC&useUnicode=true
+    username: root
+    password:
   web:
     resources:
       add-mappings: false

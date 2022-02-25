@@ -221,3 +221,164 @@ logging:
     ROOT: INFO
     com.sirloin.sandbox.api: DEBUG
 ----
+
+=== 2. mysql 컨테이너에 접근할 수 없어요!
+
+이 단락은 mysql 이용자를 `root`, 비밀번호를 `test1234` 로 설정했다고 가정합니다.
+
+application.yml 의 `datasource` 항목을 다음과 같이 수정한 뒤에,
+
+[source,yaml]
+----
+spring:
+  datasource:
+    password: test1234
+----
+
+앱을 처음 실행하면 아래와 같은 mysql 오류가 발생합니다.
+
+[source,shell]
+----
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.6.3)
+
+2022-02-17 14:36:49.480  INFO 73553 --- [           main] com.sirloin.sandbox.server.api.ApplicationKt                 : Starting ApplicationKt using Java 17.0.2 on localhost with PID 73553 (api-main-0.1.1.jar started by root in /app)
+2022-02-25 22:16:14.062  INFO 79419 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2022-02-25 22:16:15.177 ERROR 79419 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+2022-02-25 22:16:15.199 ERROR 79419 --- [           main] o.s.boot.SpringApplication               : Application run failed
+
+java.sql.SQLException: Access denied for user 'root'@'172.17.0.1' (using password: YES)
+    ... 109 common frames omitted
+Process finished with exit code 1
+----
+
+이 단락에서는 문제 발생 원인과, 해결책을 설명합니다.
+
+==== 원인
+개발 장비에 link:https://docs.docker.com/engine/install/[docker] 를 설치한 후, link:docker/run_mysql.sh[run_mysql.sh] 파일을 실행하면 아래와 같은 메시지가 출력되며 테스트용 docker mysql container 를 생성합니다.
+
+[source,shell]
+----
+$ ./run_mysql.sh test1234
+container 내의 mysqld 실행 완료시까지 대기합니다
+${sirloin-sandbox-mysql} 컨테이너 실행 완료. Local database 에 여전히 접근할 수 없다면 이 스크립트를 한번 더 실행해주세요.
+----
+
+위 스크립트를 실행하고 나면 아래의 docker 명령으로 mysql container 에 접속할 수 있습니다.
+
+[source,shell]
+----
+$ docker exec -it sirloin-sandbox-mysql mysql -h localhost -P 3306 --user=root --password=test1234
+mysql: [Warning] Using a password on the command line interface can be insecure.
+
+mysql>
+----
+
+`SHOW DATABASES` 를 입력해 `sirloin_sandbox` 데이터베이스가 있는지 확인해봅시다.
+
+[source,shell]
+----
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sirloin_sandbox    |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+----
+
+준비는 모두 끝났네요. 그럼 컨테이너가 아니라 로컬 개발환경에서 docker container 에 접속해 볼까요?
+
+[source,shell]
+----
+$ mysql -h localhost -P 8306 --user=root --password=test1234 --protocol=tcp
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'172.17.0.1' (using password: YES)
+----
+
+처음 실행하면 아마 위와 같은 오류가 발생하며 접근이 되지 않을 겁니다. 왜냐면 docker 는 우리의 개발 장비 ip 주소를 (별 다른 설정을 하지 않으면) `172.17.0.1` 로 잡는데, mysql 컨테이너를 처음 실행하면 `172.17.0.1` 호스트로부터의 `root` 이용자 접근 권한이 없기 때문에 발생하는 문제입니다.
+
+컨테이너를 최초 실행한 뒤 이용자의 접근 권한을 확인해 보면 아래와 같습니다.
+
+[source,shell]
+----
+mysql> USE mysql;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SELECT host, user FROM user;
++-----------+------------------+
+| host      | user             |
++-----------+------------------+
+| %         | root             |
+| localhost | mysql.infoschema |
+| localhost | mysql.session    |
+| localhost | mysql.sys        |
+| localhost | root             |
++-----------+------------------+
+5 rows in set (0.00 sec)
+----
+
+따라서 문제를 해결하려면 `root` 이용자를 172.17.0.1` 로부터 접속할 수 있도록 권한을 추가해 줘야 합니다. 방법은 다음과 같습니다.
+
+==== 해결
+. docker 명령을 이용해 실행중인 mysql 컨테이너에 접속
++
+[source,shell]
+----
+$ docker exec -it sirloin-sandbox-mysql mysql -h localhost -P 3306 --user=root --password=test1234
+
+mysql>
+----
+
+. `172.17.0.1` 호스트의 `root` 이용자 접근 권한을 추가
++
+[source,shell]
+----
+mysql> CREATE USER 'root'@'172.17.0.1' IDENTIFIED WITH mysql_native_password BY 'test1234';
+Query OK, 0 rows affected (0.00 sec)
+----
+
+. `172.17.0.1` 호스트의 `root` 이용자에게 데이터베이스의 모든 권한 부여
++
+[source,shell]
+----
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.17.0.1' WITH GRANT OPTION;
+Query OK, 0 rows affected (0.02 sec)
+----
+
+. 권한 정보를 모두 기록 후 종료
++
+[source,shell]
+----
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> EXIT;
+Bye
+----
+
+위의 step 대로 실행한 뒤, 다시 개발 장비에서 docker mysql container 로 접근해 봅시다. 아래처럼 제대로 접속되는 것을 확인하실 수 있습니다.
+
+[source,shell]
+----
+$ mysql -h localhost -P 8306 --user=root --password=test1234 --protocol=tcp
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 22
+Server version: 8.0.28 MySQL Community Server - GPL
+
+mysql>
+----
+
+이제 앱을 다시 실행해 보면 문제없음을 확인할 수 있습니다.

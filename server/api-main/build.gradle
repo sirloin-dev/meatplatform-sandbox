@@ -34,6 +34,9 @@ dependencies {
     // Spring boot 3 출시 이후 io.undertow:undertow-servlet-jakartaee9 로 이전 필요
     implementation "io.undertow:undertow-servlet:$version_servlet"
 
+    // MySQL
+    implementation "mysql:mysql-connector-java:$version_mysql"
+
     // Jackson Kotlin support
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$version_jackson_kotlin"
 
