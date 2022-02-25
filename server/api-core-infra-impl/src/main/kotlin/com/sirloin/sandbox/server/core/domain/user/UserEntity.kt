@@ -13,14 +13,34 @@ import java.util.*
 internal class UserEntity constructor(
     @get:Id
     var id: Long? = null,
-    override var uuid: UUID,
-    override var nickname: String,
-    override var profileImageUrl: String,
+    override val uuid: UUID,
+    nickname: String,
+    profileImageUrl: String,
     override var deletedAt: Instant?,
     override var createdAt: Instant,
-    override var updatedAt: Instant,
+    updatedAt: Instant,
     override var version: Long,
 ) : User.Editor {
+    override var nickname: String = ""
+        set(value) {
+            field = value
+            this.updatedAt = Instant.now()
+        }
+
+    override var profileImageUrl: String = ""
+        set(value) {
+            field = value
+            this.updatedAt = Instant.now()
+        }
+
+    override var updatedAt: Instant = Instant.now()
+
+    init {
+        this.nickname = nickname
+        this.profileImageUrl = profileImageUrl
+        this.updatedAt = updatedAt
+    }
+
     override fun equals(other: Any?): Boolean =
         if (other !is UserEntity) {
             false
