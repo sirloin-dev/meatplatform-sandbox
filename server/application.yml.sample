@@ -19,7 +19,7 @@ spring:
     # https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html
     initialization-mode: ALWAYS
     schema: classpath:/sql/v1.0/schema/*.sql
-    data: classpath:/sql/v1.0/data/*.sql
+    # data: classpath:/sql/v1.0/data/*.sql
     type: com.zaxxer.hikari.HikariDataSource
   web:
     resources:
