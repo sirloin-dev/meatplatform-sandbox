@@ -6,7 +6,7 @@
 CREATE TABLE IF NOT EXISTS `users`
 (
     `id`                BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `uuid`              BINARY(16)  NOT NULL UNIQUE,
+    `uuid`              BINARY(16)  NOT NULL,
     `nickname`          VARCHAR(64) NOT NULL,
     `profile_image_url` TEXT        NOT NULL,
     `deleted_at`        DATETIME,
