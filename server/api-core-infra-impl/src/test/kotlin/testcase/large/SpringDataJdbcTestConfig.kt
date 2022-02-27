@@ -4,12 +4,15 @@
  */
 package testcase.large
 
+import org.slf4j.Logger
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.core.env.Environment
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.jdbc.core.JdbcTemplate
+import java.io.FileNotFoundException
 import java.sql.Statement
 import javax.sql.DataSource
 
@@ -29,38 +32,48 @@ import javax.sql.DataSource
  * @since 2022-02-14
  */
 @TestConfiguration
-class SpringDataJdbcTestConfig {
+class SpringDataJdbcTestConfig(
+    private val env: Environment,
+    private val log: Logger
+) {
     @Bean
     fun jdbcTemplate(): JdbcTemplate {
         val dataSource = testDataSource()
 
-        // DDL Query 실행
-        forEachSqlFiles(dataSource, "classpath:/sql/v1.0/schema/*.sql") { statement, sql ->
-            statement.execute(sql)
-        }
+        with(env) {
+            // DDL Query 실행
+            forEachSqlFiles(dataSource, getProperty("${PREFIX_SQL_INIT}.schema-locations")) { statement, sql ->
+                statement.execute(sql)
+            }
 
-        // DML Query 실행
-        forEachSqlFiles(dataSource, "classpath:/sql/v1.0/data/*.sql") { statement, sql ->
-            statement.executeUpdate(sql)
+            // DML Query 실행
+            forEachSqlFiles(dataSource, getProperty("${PREFIX_SQL_INIT}.data-locations")) { statement, sql ->
+                statement.executeUpdate(sql)
+            }
         }
 
         return JdbcTemplate(dataSource)
     }
 
     // 반드시 runtime classpath 에 h2 의존성을 선언해야 합니다.
-    private fun testDataSource(): DataSource =
-        DataSourceBuilder.create()
-            .driverClassName("org.h2.Driver")
-            .url("jdbc:h2:mem:testdb;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;")
-            .username("sa")
-            .password("password")
+    private fun testDataSource(): DataSource = with(env) {
+        return@with DataSourceBuilder.create()
+            .driverClassName(getProperty("${PREFIX_DATA_SOURCE}.driver-class-name"))
+            .url(getProperty("${PREFIX_DATA_SOURCE}.url"))
+            .username(getProperty("${PREFIX_DATA_SOURCE}.username"))
+            .password(getProperty("${PREFIX_DATA_SOURCE}.password"))
             .build()
+    }
 
     private fun <T> forEachSqlFiles(
         ds: DataSource,
-        resourcePath: String,
+        resourcePath: String?,
         onEachSqlStatement: (Statement, String) -> T
     ) {
+        if (resourcePath.isNullOrEmpty()) {
+            return
+        }
+
         val stmt = ds.connection.createStatement()
 
         // Statement 는 kotlin 의 .use 를 쓸 수 없다
@@ -90,4 +103,9 @@ class SpringDataJdbcTestConfig {
 
     private fun Resource.extractSqlCommands(): List<String> =
         file.readText().replace("\n", "").split(";")
+
+    companion object {
+        private const val PREFIX_DATA_SOURCE = "spring.datasource"
+        private const val PREFIX_SQL_INIT = "spring.sql.init"
+    }
 }
