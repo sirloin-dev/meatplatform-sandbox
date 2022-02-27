@@ -2,7 +2,7 @@
  * sirloin-sandbox-server
  * Distributed under CC BY-NC-SA
  */
-package com.sirloin.sandbox.server.api.appconfig
+package com.sirloin.sandbox.server.core.appconfig
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
