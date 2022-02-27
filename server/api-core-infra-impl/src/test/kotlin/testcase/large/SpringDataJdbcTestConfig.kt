@@ -67,7 +67,12 @@ class SpringDataJdbcTestConfig {
         @Suppress("ConvertTryFinallyToUseCall")
         try {
             val resolver = PathMatchingResourcePatternResolver()
-            val sqlFiles: Array<Resource> = resolver.getResources(resourcePath)
+            val sqlFiles: Array<Resource> = try {
+                resolver.getResources(resourcePath)
+            } catch (e: FileNotFoundException) {
+                log.warn("SQL File '{}' 이 없습니다.", resourcePath)
+                return
+            }
 
             sqlFiles.forEach { sqlFile ->
                 sqlFile.extractSqlCommands().forEach forEachSqlCommand@{ sql ->
