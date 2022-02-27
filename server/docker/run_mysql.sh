@@ -15,8 +15,15 @@ RDB_PORT=8306
 RDB_PORT_LOCAL=3306
 RDB_USER_ROOT="root"
 RDB_DB_NAME="sirloin_sandbox"
-
 TEST_IMAGE=$(docker ps -a --format "{{.Names}}" | grep "${RDB_NAME}")
+
+# region Functions
+run_mysql(){
+   COMMAND=$1
+   docker exec -it ${RDB_NAME} mysql -h $RDB_HOST -P ${RDB_PORT_LOCAL} --user=${RDB_USER_ROOT} --password=${ROOT_PASSWORD} -e "${COMMAND}" > /dev/null
+}
+# endregion
+
 if [ -z "$TEST_IMAGE" ]; then
   docker run --name ${RDB_NAME} -e MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD} -p ${RDB_PORT}:${RDB_PORT_LOCAL} -d $DOCKER_IMAGE > /dev/null
   echo "container 내의 mysqld 실행 완료시까지 대기합니다"
@@ -39,7 +46,7 @@ fi
 WAIT_LOCK=1
 while [ $WAIT_LOCK -eq 1 ]
 do
-  docker exec -it ${RDB_NAME} mysql -h $RDB_HOST -P ${RDB_PORT_LOCAL} --user=${RDB_USER_ROOT} --password=${ROOT_PASSWORD} -e "SHOW DATABASES;" > /dev/null
+  run_mysql "SHOW DATABASES;"
   WAIT_LOCK=$?
   sleep 2
 done
@@ -47,9 +54,10 @@ done
 # 특정 프레임워크에서 mysql caching_sha2_password 방식을 지원하지 않는 경우가 있어 legacy 방식인
 # mysql_native_password 로 암호를 강제 변경해준다.
 # https://stackoverflow.com/questions/50373427/node-js-cant-authenticate-to-mysql-8-0
-docker exec -it ${RDB_NAME} mysql -h $RDB_HOST -P ${RDB_PORT_LOCAL} --user=${RDB_USER_ROOT} --password=${ROOT_PASSWORD} -e "DROP DATABASE ${RDB_DB_NAME};"
-docker exec -it ${RDB_NAME} mysql -h $RDB_HOST -P ${RDB_PORT_LOCAL} --user=${RDB_USER_ROOT} --password=${ROOT_PASSWORD} -e "CREATE DATABASE ${RDB_DB_NAME};"
-docker exec -it ${RDB_NAME} mysql -h $RDB_HOST -P ${RDB_PORT_LOCAL} --user=${RDB_USER_ROOT} --password=${ROOT_PASSWORD} -e "ALTER USER '${RDB_USER_ROOT}'@'%' IDENTIFIED WITH mysql_native_password BY '${RDB_PASSWORD}';"
-docker exec -it ${RDB_NAME} mysql -h $RDB_HOST -P ${RDB_PORT_LOCAL} --user=${RDB_USER_ROOT} --password=${ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
+run_mysql "DROP DATABASE IF EXISTS ${RDB_DB_NAME};"
+run_mysql "CREATE DATABASE ${RDB_DB_NAME};"
+run_mysql "ALTER USER '${RDB_USER_ROOT}'@'%' IDENTIFIED WITH mysql_native_password BY '${RDB_PASSWORD}';"
+run_mysql "FLUSH PRIVILEGES;"
 
 echo "${RDB_NAME} 컨테이너 실행 완료. Local database 에 여전히 접근할 수 없다면 이 스크립트를 한번 더 실행해주세요."
+exit 0
