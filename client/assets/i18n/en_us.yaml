@@ -1,0 +1,56 @@
+#
+# sirloin-sandbox-client
+# Distributed under CC BY-NC-SA
+#
+
+# Fallback 언어를 영어로 설정했습니다.
+# 이 앱은 한국어만 지원하니, 한국어로 작성해주세요.
+title:
+  main: "Sirloin-sandbox Client"
+  splash: "Splash"
+  registration: "회원 가입"
+  myProfile: "내 프로필"
+  editProfile: "프로필 편집"
+
+splash:
+  btn:
+    register: "가입하기"
+
+registration:
+  btn:
+    register: "가입하기"
+  text:
+    nickname: "Nickname"
+    nicknameHint: "최소 2자, 최대 32자 이내"
+    profileImageUrl: "프로필 이미지 URL"
+  error: "가입 오류"
+
+profile:
+  btn:
+    editProfile: "프로필 수정"
+    deregister: "회원 탈퇴"
+  text:
+    userId: "User Id: {userId}"
+    nickname: "Nickname: {nickname}"
+    profileImageUrl: "Profile Image: {profileImageUrl}"
+  editText:
+    nickname: "Nickname"
+    nicknameHint: "최소 2자, 최대 32자 이내"
+    profileImageUrl: "프로필 이미지 URL"
+
+deregister:
+  title: "회원 탈퇴"
+  message: "회원 탈퇴시 모든 정보가 삭제됩니다. 정말 탈퇴하시겠습니까?"
+  btn:
+    deregister: "회원 탈퇴"
+
+text:
+  loading: "불러오는 중"
+  btn:
+    confirm: "확인"
+    cancel: "취소"
+
+error:
+  common:
+    message: "API 서버와의 통신 중 오류가 발생했습니다."
+    messageWithFormat: "API 서버와의 통신 중 오류가 발생했습니다. ({message})"
