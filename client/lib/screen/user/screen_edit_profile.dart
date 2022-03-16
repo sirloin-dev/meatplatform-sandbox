@@ -9,7 +9,7 @@ import 'package:sirloin_sandbox_client/di/di_modules.dart';
 import 'package:sirloin_sandbox_client/domain/user/user.dart';
 import 'package:sirloin_sandbox_client/domain/user/bloc/edit_profile/bloc_edit_profile.dart';
 import 'package:sirloin_sandbox_client/domain/user/bloc/edit_profile/state_edit_profile.dart';
-import 'package:sirloin_sandbox_client/screen/user/profile/screen_profile.dart';
+import 'package:sirloin_sandbox_client/screen/user/screen_profile.dart';
 import 'package:sirloin_sandbox_client/widget/dialog/alert_dialog_exceptions.dart';
 import 'package:sirloin_sandbox_client/widget/extensions_build_context.dart';
 

@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sirloin_sandbox_client/di/di_modules.dart';
-import 'package:sirloin_sandbox_client/screen/user/profile/screen_profile.dart';
+import 'package:sirloin_sandbox_client/screen/user/screen_profile.dart';
 import 'package:sirloin_sandbox_client/domain/user/bloc/register/bloc_register_user.dart';
 import 'package:sirloin_sandbox_client/domain/user/bloc/register/state_register_user.dart';
 import 'package:sirloin_sandbox_client/widget/dialog/alert_dialog_exceptions.dart';

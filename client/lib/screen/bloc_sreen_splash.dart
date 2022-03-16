@@ -7,8 +7,8 @@ import 'package:logger/logger.dart';
 import 'package:sirloin_sandbox_client/di/di_modules.dart';
 import 'package:sirloin_sandbox_client/domain/user/repository/repo_user.dart';
 import 'package:sirloin_sandbox_client/domain/user/user.dart';
-import 'package:sirloin_sandbox_client/screen/events_screen_splash.dart';
-import 'package:sirloin_sandbox_client/screen/states_screen_splash.dart';
+import 'package:sirloin_sandbox_client/screen/message_screen_splash.dart';
+import 'package:sirloin_sandbox_client/screen/state_screen_splash.dart';
 
 /*
  * POINT: 이 Bloc 은 Splash screen 의 비즈니스 뿐 아니라 애플리케이션 초기화라는

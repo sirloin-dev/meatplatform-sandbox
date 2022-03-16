@@ -5,9 +5,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sirloin_sandbox_client/screen/bloc_sreen_splash.dart';
-import 'package:sirloin_sandbox_client/screen/events_screen_splash.dart';
-import 'package:sirloin_sandbox_client/screen/states_screen_splash.dart';
-import 'package:sirloin_sandbox_client/screen/user/profile/screen_profile.dart';
+import 'package:sirloin_sandbox_client/screen/message_screen_splash.dart';
+import 'package:sirloin_sandbox_client/screen/state_screen_splash.dart';
+import 'package:sirloin_sandbox_client/screen/user/screen_profile.dart';
 import 'package:sirloin_sandbox_client/screen/user/screen_registration.dart';
 import 'package:sirloin_sandbox_client/widget/extensions_build_context.dart';
 
