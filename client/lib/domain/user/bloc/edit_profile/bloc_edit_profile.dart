@@ -26,7 +26,6 @@ class EditProfileBloc extends Bloc<EditProfileBlocMessage, EditProfileBlocState>
     add(UserDataSetMessage(user));
   }
 
-  // POINT: 이 구현에는 어떤 문제가 있을까요?
   void updateProfile(final String nickname, final String profileImageUrl) {
     add(ProceedEditProfileMessage(nickname, profileImageUrl));
   }

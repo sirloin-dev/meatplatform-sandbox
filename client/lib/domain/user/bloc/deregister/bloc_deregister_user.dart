@@ -25,7 +25,6 @@ class DeregisterUserBloc extends Bloc<DeregisterUserBlocMessage, DeregisterUserB
     try {
       await _userRepo.deregister(message.uuid);
     } catch (e) {
-      // POINT: 이 오류 처리 방식에는 문제가 있습니다. 어떻게 개선할 수 있을까요?
       _logger.d("User deregistration via API has failed", e);
       if (e is Exception) {
         emit(ApiErrorState(e));

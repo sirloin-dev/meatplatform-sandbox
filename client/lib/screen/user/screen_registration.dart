@@ -28,7 +28,6 @@ class RegistrationScreen extends StatelessWidget {
                 userRegisteredState: (state) => _onUserRegistered(ctx, state)),
           )));
 
-  // POINT: 이 구현은 이용자 편이성이 매우 떨어집니다. 어떻게 개선할 수 있을까요?
   Widget _onInitialState(final BuildContext context) {
     final nicknameControl = TextEditingController();
     final profileImageControl = TextEditingController();

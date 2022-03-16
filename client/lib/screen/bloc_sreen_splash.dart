@@ -25,7 +25,6 @@ class SplashScreenBloc extends Bloc<SplashScreenMessage, SplashScreenState> {
   }
 
   // POINT: DI 모듈 초기화처럼 중요한 동작을 특정 UI 의 비즈니스에 종속시켜도 괜찮을까요?
-  // POINT: 이 코드를 Network off 상황에서도 테스트 가능하게 하려면 어떻게 해야 할까요?
   Future<void> _onInitProgrammeMessage(
       final InitProgrammeMessage message, final Emitter<SplashScreenState> emit) async {
     // Step 1: DI module 초기화
@@ -47,7 +46,6 @@ class SplashScreenBloc extends Bloc<SplashScreenMessage, SplashScreenState> {
     try {
       maybeVerifiedUser = await userRepository.getUser(uuid: maybeUser.uuid, forceRefresh: true);
     } catch (e) {
-      // POINT: 이 오류 처리 방식에는 문제가 있습니다. 어떻게 개선할 수 있을까요?
       logger.d("User verification via API has failed", e);
       await userRepository.deleteSavedUser(maybeUser.uuid);
       emit(SavedUserNotFoundState());
