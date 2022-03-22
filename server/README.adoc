@@ -382,3 +382,10 @@ mysql>
 ----
 
 이제 앱을 다시 실행해 보면 문제없음을 확인할 수 있습니다.
+
+=== 3. mac m1에서 mysql 이미지가 설치되지 않아요!
+
+mysql의 스크립트에서 설치되는 mysql의 이미지가 mac의 m1과 호환이 되지 않아서 발생한 문제입니다.
+link:https://docs.docker.com/engine/install/[run_mysql.sh]에서 image를 변경합니다.
+
+ DOCKER_IMAGE="arm64v8/mysql:8.0.28-oracle"
