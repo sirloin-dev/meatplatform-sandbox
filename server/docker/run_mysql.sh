@@ -9,6 +9,11 @@ if [ "$ROOT_PASSWORD" == "" ]; then
 fi
 
 DOCKER_IMAGE="mysql:8.0.28"
+ARCH=$(uname -m)
+if [ "$ARCH" == "arm64" ]; then
+  DOCKER_IMAGE="arm64v8/mysql:8.0.28-oracle"
+fi
+
 RDB_NAME="sirloin-sandbox-mysql"
 RDB_HOST="localhost"
 RDB_PORT=8306
