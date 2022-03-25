@@ -212,7 +212,7 @@ asciidoc 문서 템플릿은 `src/asciidoc` 디렉토리 아래에 있습니다.
 [[troubleshoot_no_logs,로그가 출력되지 않아요!]]
 === 1. 로그가 출력되지 않아요!
 
-프로젝트 최초 시작 후, 루트 디렉토리의 `application.yml` 을 복사해서 `application.yml` 로 파일을 생성해주세요. 그리고, 아래의 logback 설정을 확인해 주시기 바랍니다.
+프로젝트 최초 시작 후, 루트 디렉토리의 `application.yml.sample` 을 복사해서 `application.yml` 로 파일을 생성해주세요. 그리고, 아래의 logback 설정을 확인해 주시기 바랍니다.
 
 [source,yaml]
 ----
