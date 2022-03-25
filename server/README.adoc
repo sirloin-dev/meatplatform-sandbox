@@ -535,11 +535,3 @@ public final class MockUser {
 NOTE: 코틀린 코드를 자바 코드로 디컴파일한 상태
 
 생성자 방식은 Fixture Monkey에서 mock data를 생성할 수 있다.
-
-
-
-
-
-
-
-
