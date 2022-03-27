@@ -392,29 +392,40 @@ link:https://docs.docker.com/engine/install/[run_mysql.sh]에서 image를 변경
  DOCKER_IMAGE="arm64v8/mysql:8.0.28-oracle"
 ----
 
-== 테스트코드에서 Fixture Monkey를 사용하기 어려운 이유
+== Kotlin 기반 프로젝트와 테스트코드에서 Fixture Monkey를 사용하기 어려운 이유
+Fixture monkey(혹은 AutoParams)에서는 프로젝트 내의 데이터 오브젝트를 참조해서 mock 객체를 생성한다.
+코틀린에서는 자바에서는 없는 internal 접근제어자나 자바와는 다른 데이터 오브젝트의 생성 방식등으로 데이터 오브젝트에 접근 혹은 생성이 어렵기 때문에 코틀린 프로젝트에서는
+Fixture Monkey(혹은 AutoParams)를 사용하기 어려운 점이 있다.
+그러나 Faker는 클래스내 필요할 것이라 예상되는 필드들을 라이브러리 내에 직접 가지고 mock data를 생성하기 때문에 프로젝트내의 데이터 오브젝트를 의존하지 않는 점이 있어서 위의 제약사항에서 상대적으로 자유로운 점이 있다.
 
 === 1. mock data를 만들기 위해 data class에 접근할 수 있어야하는데 internal일 경우 접근이 어렵다.
 [source,kotlin]
 ----
-        internal data class Model(
-            override val uuid: UUID,
-            override var nickname: String,
-            override var profileImageUrl: String,
-            override var deletedAt: Instant?,
-            override val createdAt: Instant,
-            override var updatedAt: Instant,
-            override val version: Long
-        ) : Editor
+internal data class Model(
+        override val uuid: UUID,
+        override var nickname: String,
+        override var profileImageUrl: String,
+        override var deletedAt: Instant?,
+        override val createdAt: Instant,
+        override var updatedAt: Instant,
+        override val version: Long
+        )
 ----
+
+[source, shell script]
+----
+Cannot access 'Model': it is internal in 'Companion'
+----
+
 Fixture Monkey에서 접근 가능한 data class를 필요로 한다.
+internal class 설정이 되어있는 데이터 오브젝트를 사용하면 위와 같은 에러가 발생한다.
 
 === 2. 원본 코드의 접근제어자를 변경해주어야할 수도 있다.
 [source,shell script]
 ----
 class org.hibernate.validator.internal.util.privilegedactions.NewInstance cannot access a member of class com.sirloin.sandbox.server.api.validation.UnicodeCharsLengthValidator with modifiers "public"
 ----
-[source, shell script]
+[source, kotlin]
 ----
 private class UnicodeCharsLengthValidator : ConstraintValidator<UnicodeCharsLength, CharSequence> {
     private var min = 0
@@ -425,7 +436,7 @@ private class UnicodeCharsLengthValidator : ConstraintValidator<UnicodeCharsLeng
         this.max = it.max
     } ?: Unit
 ----
-Fixture Monkey는 data class를 이용해 mock data를 생성하는데 class에 private 같은 접근지정자가 있으면 Fixture Monkey에서 접근이 되지 않아 문제가 생길 수 있다.
+Fixture Monkey는 데이터 오브젝트를 참조하여 mock data를 생성하는데 class 내부에 private 같은 접근제어자가 있으면 Fixture Monkey에서 접근이 되지 않아 문제가 생길 수 있다.
 
 === 3. 테스트 코드 작성시 mock으로 생성할 필드의 이름을 하드코딩해야한다.
 [source, kotlin]
@@ -453,7 +464,7 @@ fun CreateUserRequest.Companion.random(
 ----
 TIP: 위와 같은 방법으로 해결할 수는 있다.
 
-=== 4. 데이터 오브젝트가 생성자를 통해 만드는 방식으로 제한된다.
+=== 4. 데이터 오브젝트의 객체 생성이 생성자 파라미터를 가진 클래스로 제한된다.
 ==== Getter/Setter 방식
 [source, kotlin]
 ----
