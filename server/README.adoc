@@ -402,14 +402,14 @@ Fixture Monkey(혹은 AutoParams)를 사용하기 어려운 점이 있다.
 [source,kotlin]
 ----
 internal data class Model(
-        override val uuid: UUID,
-        override var nickname: String,
-        override var profileImageUrl: String,
-        override var deletedAt: Instant?,
-        override val createdAt: Instant,
-        override var updatedAt: Instant,
-        override val version: Long
-        )
+    override val uuid: UUID,
+    override var nickname: String,
+    override var profileImageUrl: String,
+    override var deletedAt: Instant?,
+    override val createdAt: Instant,
+    override var updatedAt: Instant,
+    override val version: Long
+    )
 ----
 
 [source, shell script]
@@ -474,8 +474,10 @@ TIP: 위와 같은 방법으로 해결할 수는 있다.
 
 [source, kotlin]
 ----
-class MockUser(val nickname: String,
-               val profileImageUrl: String)
+class MockUser(
+    val nickname: String,
+    val profileImageUrl: String
+    )
 ----
 
 코틀린에서 주로 쓰이는 데이터 오브젝트 생성 방법이다. (class 앞에 data를 붙여서 쓴다. - hashcode, toString, equals 메서드가 생성된다)
