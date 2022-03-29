@@ -391,3 +391,188 @@ link:https://docs.docker.com/engine/install/[run_mysql.sh]에서 image를 변경
 ----
  DOCKER_IMAGE="arm64v8/mysql:8.0.28-oracle"
 ----
+
+== Kotlin 기반 프로젝트와 테스트코드에서 Fixture Monkey를 사용하기 어려운 이유
+Fixture monkey(혹은 AutoParams)에서는 프로젝트 내의 데이터 오브젝트를 참조해서 mock 객체를 생성한다.
+코틀린에서는 자바에서는 없는 `internal` 접근제어자나 자바와는 다른 데이터 오브젝트의 생성 방식등으로 데이터 오브젝트에 접근 혹은 생성이 어렵기 때문에 코틀린 프로젝트에서는
+Fixture Monkey(혹은 AutoParams)를 사용하기 어려운 점이 있다.
+그러나 Faker는 클래스내 필요할 것이라 예상되는 필드들을 라이브러리 내에 직접 가지고 mock data를 생성하기 때문에 프로젝트내의 데이터 오브젝트를 의존하지 않는 점이 있어서 위의 제약사항에서 상대적으로 자유로운 점이 있다.
+
+=== 1. mock data를 만들기 위해 `data class` 에 접근할 수 있어야하는데 `internal` 일 경우 접근이 어렵다.
+[source,kotlin]
+----
+internal data class Model(
+    override val uuid: UUID,
+    override var nickname: String,
+    override var profileImageUrl: String,
+    override var deletedAt: Instant?,
+    override val createdAt: Instant,
+    override var updatedAt: Instant,
+    override val version: Long
+    )
+----
+
+[source, shell script]
+----
+Cannot access 'Model': it is internal in 'Companion'
+----
+
+Fixture Monkey에서 접근 가능한 `data class` 를 필요로 한다.
+`internal class` 설정이 되어있는 데이터 오브젝트를 사용하면 위와 같은 에러가 발생한다.
+
+=== 2. 원본 코드의 접근제어자를 변경해주어야할 수도 있다.
+[source,shell script]
+----
+class org.hibernate.validator.internal.util.privilegedactions.NewInstance cannot access a member of class com.sirloin.sandbox.server.api.validation.UnicodeCharsLengthValidator with modifiers "public"
+----
+[source, kotlin]
+----
+private class UnicodeCharsLengthValidator : ConstraintValidator<UnicodeCharsLength, CharSequence> {
+    private var min = 0
+    private var max = Int.MAX_VALUE
+
+    override fun initialize(constraintAnnotation: UnicodeCharsLength?) = constraintAnnotation?.let {
+        this.min = it.min
+        this.max = it.max
+    } ?: Unit
+----
+Fixture Monkey는 데이터 오브젝트를 참조하여 mock data를 생성하는데 class 내부에 `private` 같은 접근제어자가 있으면 Fixture Monkey에서 접근이 되지 않아 문제가 생길 수 있다.
+
+=== 3. 테스트 코드 작성시 mock으로 생성할 필드의 이름을 하드코딩해야한다.
+[source, kotlin]
+----
+fun CreateUserRequest.Companion.random(
+    nickname: String? = null,
+    profileImageUrl: String? = null
+): CreateUserRequest = with(KFixtureMonkey.create()) {
+    val actual = this.giveMeBuilder(MockUser::class.java)
+        .set(
+            "nickname", Arbitraries.strings()
+                .ofMinLength(User.NICKNAME_SIZE_MIN)
+                .ofMaxLength(User.NICKNAME_SIZE_MAX)
+                .alpha()
+        )
+        .set("profileImageUrl", Arbitraries.strings().alpha())
+        .sample()
+----
+생성될 mock data의 세부 조건을 설정할 때 `data class` 의 field 명을 하드코딩해야할 수도 있다.
+
+[source, kotlin]
+----
+        .set(MockUser::profileImageUrl.toString(), Arbitraries.strings().alpha())
+        .sample()
+----
+TIP: 위와 같은 방법으로 해결할 수는 있다.
+
+=== 4. 데이터 오브젝트가 Setter를 통해 만드는 방식으로 제한된다.
+
+==== Constructor 방식
+코틀린의 데이터 오브젝트는 클래스의 파라미터에 변수를 선언해주는 것으로 생성된다.
+이것은 내부적으로 자바 코드에서 클래스의 생성자를 통해 데이터 오브젝트를 생성하는 방식과 동일하다.
+그러나 Fixture Monkey에서는 Setter를 이용해 mock data를 생성하기 때문에
+코틀린의 생성자로 데이터 오브젝트를 생성하는 방식으로는 mock 객체를 만들어줄수 없다.
+
+[source, kotlin]
+----
+class MockUser(
+    val nickname: String,
+    val profileImageUrl: String
+    )
+----
+
+코틀린에서 주로 쓰이는 데이터 오브젝트 생성 방법이다. (class 앞에 data를 붙여서 쓴다. - hashcode, toString, equals 메서드가 생성된다)
+위의 class는 자바 코드에서 생성자를 통해 필드에 데이터를 넣어주는 코드로 변환된다.
+
+[source, shell script]
+----
+testcase.large.endpoint.v1.user.MockUser.<init>()
+java.lang.NoSuchMethodException: testcase.large.endpoint.v1.user.MockUser.<init>()
+	at java.base/java.lang.Class.getConstructor0(Class.java:3585)
+	at java.base/java.lang.Class.getDeclaredConstructor(Class.java:2754)
+--more
+----
+
+생성자 방식으로 Fixture Monkey를 사용했을 때 발생하는 에러 로그이다.
+위의 내용은 존재하지 않는 메서드를 호출했을 때 발생한다.
+이 케이스는 존재하지 않는 생성자를 호출했을 경우이다.
+
+[source, kotlin]
+----
+public final class MockUser {
+   @NotNull
+   private final String nickname;
+   @NotNull
+   private final String profileImageUrl;
+
+   @NotNull
+   public final String getNickname() {
+      return this.nickname;
+   }
+
+   @NotNull
+   public final String getProfileImageUrl() {
+      return this.profileImageUrl;
+   }
+
+   public MockUser(@NotNull String nickname, @NotNull String profileImageUrl) {
+      Intrinsics.checkNotNullParameter(nickname, "nickname");
+      Intrinsics.checkNotNullParameter(profileImageUrl, "profileImageUrl");
+      super();
+      this.nickname = nickname;
+      this.profileImageUrl = profileImageUrl;
+   }
+}
+----
+NOTE: 코틀린 코드를 자바 코드로 디컴파일한 상태
+
+자바 코드로 변환된 상태이다.
+생성자를 통해 필드에 값을 넣어주는 것을 알 수 있다.
+
+==== Getter/Setter 방식
+코틀린의 클래스내에서 `var` 로 변수로 선언하게 되면 자바 코드에서는 생성자가 아닌 getter/setter 코드로 변환이 된다.
+
+[source, kotlin]
+----
+class MockUser {
+    var nickname: String = ""
+    var profileImageUrl: String = ""
+}
+----
+
+Fixture Monkey에서는 위의 코드가 동작한다.
+
+[source, kotlin]
+----
+public final class MockUser {
+   @NotNull
+   private String nickname = "";
+   @NotNull
+   private String profileImageUrl = "";
+
+   @NotNull
+   public final String getNickname() {
+      return this.nickname;
+   }
+
+   public final void setNickname(@NotNull String var1) {
+      Intrinsics.checkNotNullParameter(var1, "<set-?>");
+      this.nickname = var1;
+   }
+
+   @NotNull
+   public final String getProfileImageUrl() {
+      return this.profileImageUrl;
+   }
+
+   public final void setProfileImageUrl(@NotNull String var1) {
+      Intrinsics.checkNotNullParameter(var1, "<set-?>");
+      this.profileImageUrl = var1;
+   }
+}
+----
+NOTE: 코틀린 코드를 자바 코드로 디컴파일한 상태
+
+자바 코드로 변환된 상태이다.
+생성자는 사라지고 getter/setter 코드가 있는 것을 알 수 있다.
+
+TIP: 서드파티 라이브러리 중에서 kotlin을 위한 Fixture Monkey가 있다. 해당 라이브러리를 사용하면 생성자를 통한 데이터 오브젝트 생성이 가능하다.
