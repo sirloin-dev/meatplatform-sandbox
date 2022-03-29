@@ -398,7 +398,7 @@ Fixture monkey(혹은 AutoParams)에서는 프로젝트 내의 데이터 오브�
 Fixture Monkey(혹은 AutoParams)를 사용하기 어려운 점이 있다.
 그러나 Faker는 클래스내 필요할 것이라 예상되는 필드들을 라이브러리 내에 직접 가지고 mock data를 생성하기 때문에 프로젝트내의 데이터 오브젝트를 의존하지 않는 점이 있어서 위의 제약사항에서 상대적으로 자유로운 점이 있다.
 
-=== 1. mock data를 만들기 위해 data class에 접근할 수 있어야하는데 internal일 경우 접근이 어렵다.
+=== 1. mock data를 만들기 위해 `data class` 에 접근할 수 있어야하는데 `internal` 일 경우 접근이 어렵다.
 [source,kotlin]
 ----
 internal data class Model(
