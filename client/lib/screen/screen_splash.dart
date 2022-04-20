@@ -4,7 +4,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sirloin_sandbox_client/screen/bloc_sreen_splash.dart';
+import 'package:sirloin_sandbox_client/screen/bloc_screen_splash.dart';
 import 'package:sirloin_sandbox_client/screen/message_screen_splash.dart';
 import 'package:sirloin_sandbox_client/screen/state_screen_splash.dart';
 import 'package:sirloin_sandbox_client/screen/user/screen_profile.dart';
