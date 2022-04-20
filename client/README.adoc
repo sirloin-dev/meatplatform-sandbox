@@ -289,7 +289,7 @@ Android studio 에서 test 파일을 우클릭하면 나오는 Pop-up context me
 
 === 3. 코드 빌드가 안 됩니다!
 
-이 프로젝트에서는 구현체가 아직 없는 경우나, 구혀네가 있더라도 특정 단위만 테스트 하고 싶은 경우 link:{link-dart-pub}/mockito[mockito] 라이브러리를 사용합니다. +
+이 프로젝트에서는 구현체가 아직 없는 경우나, 구현되어 있더라도 특정 단위만 테스트 하고 싶은 경우 link:{link-dart-pub}/mockito[mockito] 라이브러리를 사용합니다. +
 
 [source,shell]
 ----
