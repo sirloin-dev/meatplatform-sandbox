@@ -1,0 +1,45 @@
+#
+# sirloin-sandbox-server
+# Distributed under CC BY-NC-SA
+#
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: sirloin-sandbox-server
+  profiles:
+    # Empty if 'default'.
+    active:
+  datasource:
+    # Automatic database initialisation. Maybe conflict to hibernate.
+    # https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html
+    initialization-mode: ALWAYS
+    schema: classpath:/sql/v1.0/schema/*.sql
+    # data: classpath:/sql/v1.0/data/*.sql
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8306/sirloin_sandbox?serverTimezone=UTC&useUnicode=true&character_set_server=utf8mb4;
+    username: root
+    # docker/run_mysql.sh 를 실행할 때 입력한 root password 를 여기 적어주세요.
+    password: ${PLATFORM_SANDBOX_SECRET}
+  web:
+    resources:
+      add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+management:
+  server:
+    add-application-context-header: false
+
+logging:
+#  file:
+#    path: /var/log/meatplatform-api/
+  level:
+    ROOT: INFO
+    # org.springframework.web.servlet: TRACE
+    com.sirloin.sandbox.server: DEBUG
