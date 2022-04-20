@@ -66,15 +66,30 @@ Running Gradle task 'assembleRelease'...                           45.3s
 자세한 내용은 link:{link-flutter-base}/deployment/android[공식 문서 - android build] 를 참고하세요.
 
 `flutter build apk` 와 `flutter build apk --split-per-abi` 의 다른 점은 무엇일까요?::
-: `--split-per-abi` 를 통해서 타겟별도 따로 빌드되었고 결과물의 크기도 줄어든 것을 확인할 수 있지만 어떤 기기(cpu)를 통해 빌드하게 될지 알 수 없기 때문에 우선 포괄적으로 빌드하기 위해 `flutter build apk` 로 진행합니다.
+: `--split-per-abi` 를 통해서 타겟별도 따로 빌드되었고 결과물의 크기도 줄어든 것을 확인할 수 있지만 어떤 기기(cpu)를 통해 빌드하게 될지 알 수 없기 때문에 우선 포괄적으로 빌드하기 위해 `flutter build apk` 로 진행합니다. +
+: `flutter build apk` (Universal package)의 배포의 편리함을 위해 이용히지만 이용자에게 불편함을 초래하기 때문에 이후 play store에서는 ABI split를 통해 각각 다르게 업로드 해야할 필요가 있겠습니다.
+
+조금 더 자세한 설명은 link:https://developer.android.com/studio/build/configure-apk-splits?hl=ko[android developer - 다중 APK 빌드]를 참고하세요.
 
 
 ==== 2. iOS build
 
-빌드 결과물은 project root 의 build/app/outputs/flutter-apk/ 에 있습니다.
+Xcode로 빌드 아카이브를 만들어보겠습니다. +
+( `flutter doctor` 로 xcode 설치여부를 확인해 볼 수 있습니다.)
+
+*주의 ! ios build를 하는 과정에서는 Bundle Identifier이 필요합니다.* +
+(Bundle ID를 등록하기 위해서는 반드시 link:https://developer.apple.com/programs/enroll/[Apple 개발자 프로그램]에 등록해야합니다.)
+
+계정 등록과 디바이스 등록 이후, 다음과 같이 입력합니다.
+
+[source,shell]
+----
+$ flutter build ipa
+----
+
+빌드 결과물은 project root 의 build/ios/archive/ 디렉토리에 있습니다.
 
 자세한 내용은 link:{link-flutter-base}/deployment/ios[공식 문서 - ios build] 를 참고하세요.
-
 ==== 3. Web build
 
 아래와 같이 입력합니다.
@@ -274,7 +289,16 @@ Android studio 에서 test 파일을 우클릭하면 나오는 Pop-up context me
 
 === 3. 코드 빌드가 안 됩니다!
 
-이 프로젝트에서는 기타 언어의 pattern matching 기능을 흉내낸 link:{link-dart-pub}/match[match] 라이브러리를 사용합니다. 이 라이브러리는 code generation 기술에 의존하기 때문에 match 구문을 제대로 생성하려면 터미널에서 아래 명령을 실행해야 합니다.
+이 프로젝트에서는 구현체가 아직 없는 경우나, 구혀네가 있더라도 특정 단위만 테스트 하고 싶은 경우 link:{link-dart-pub}/mockito[mockito] 라이브러리를 사용합니다. +
+
+[source,shell]
+----
+$ flutter pub add mockito
+----
+위와 같은 명령어를 통해 mockito 라이브러리를 설치합니다. +
+
+이 라이브러리는 code generation 기술에 의존하기 때문에 제대로 생성하려면 터미널에서 아래 명령을 실행해야 합니다. +
+라이브러리 요소에 `@GenerateMocks` 주석을 추가하면 Mockito 코드생성 (`.mocks.dart` 파일)이 빌드 이후 자연스럽게 이루어집니다.
 
 [source,shell]
 ----
@@ -298,11 +322,8 @@ $ flutter pub run build_runner build
 [INFO] Succeeded after 1.1s with 0 outputs (29 actions)
 ----
 
-그런데 match 를 쓰는 소스코드를 수정한 뒤 매번 명령을 입력하는것은 매우 번거롭습니다.
 따라서, link:https://plugins.jetbrains.com/plugin/14442-flutter-toolkit/[Flutter-Toolkit] 플러그인을 설치하면 번거로움을 크게 줄일 수 있습니다.
 
 `Settings` > `Plugin` > `Marketplace` > `Flutter-Toolkit` 검색 > 설치
 
 플러그인 설치 후에는 매번 터미널에 명령을 입력할 필요 없이, Android Studio 의 실행 Ribbon menu 옆에 생긴 Flutter-Toolkit 기능을 이용할 수 있습니다.
-
-=== 4. 
