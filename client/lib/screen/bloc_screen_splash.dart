@@ -26,7 +26,6 @@ class SplashScreenBloc extends Bloc<SplashScreenMessage, SplashScreenState> {
   }
 
   // POINT: DI 모듈 초기화처럼 중요한 동작을 특정 UI 의 비즈니스에 종속시켜도 괜찮을까요?
-  // 종속성을 분리하는 것이
   Future<void> _onInitProgrammeMessage(final InitProgrammeMessage message,
       final Emitter<SplashScreenState> emit) async {
     // Step 1: DI module 초기화
