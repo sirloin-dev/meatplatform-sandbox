@@ -31,8 +31,7 @@ void main() {
 
   test("HTTP GET 은 URI, Header 를 이용한다", () async {
     // when:
-    when(mockClient.get(uri, headers: MtHttpClient.defaultHeaders))
-        .thenAnswer((_) => expectedOkResponse);
+    when(mockClient.get(uri, headers: MtHttpClient.defaultHeaders)).thenAnswer((_) => expectedOkResponse);
 
     // then:
     final actual = await sut.get(url);
@@ -46,8 +45,7 @@ void main() {
     final request = anyJsonSerializable();
 
     // when:
-    when(mockClient.post(uri,
-            body: request.toJsonString(), headers: MtHttpClient.defaultHeaders))
+    when(mockClient.post(uri, body: request.toJsonString(), headers: MtHttpClient.defaultHeaders))
         .thenAnswer((_) => expectedOkResponse);
 
     // then:
@@ -62,8 +60,7 @@ void main() {
     final request = anyJsonSerializable();
 
     // when:
-    when(mockClient.patch(uri,
-            body: request.toJsonString(), headers: MtHttpClient.defaultHeaders))
+    when(mockClient.patch(uri, body: request.toJsonString(), headers: MtHttpClient.defaultHeaders))
         .thenAnswer((_) => expectedOkResponse);
 
     // then:
@@ -75,8 +72,7 @@ void main() {
 
   test("HTTP DELETE 는 URI, Header 를 이용한다", () async {
     // when:
-    when(mockClient.delete(uri, headers: MtHttpClient.defaultHeaders))
-        .thenAnswer((_) => expectedOkResponse);
+    when(mockClient.delete(uri, headers: MtHttpClient.defaultHeaders)).thenAnswer((_) => expectedOkResponse);
 
     // then:
     final actual = await sut.delete(url);
