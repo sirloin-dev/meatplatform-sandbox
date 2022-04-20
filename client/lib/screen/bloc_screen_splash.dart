@@ -20,19 +20,22 @@ class SplashScreenBloc extends Bloc<SplashScreenMessage, SplashScreenState> {
     on<InitProgrammeMessage>(_onInitProgrammeMessage);
   }
 
-  void _onScreenReadyMessage(final ScreenReadyMessage message, final Emitter<SplashScreenState> emit) {
+  void _onScreenReadyMessage(
+      final ScreenReadyMessage message, final Emitter<SplashScreenState> emit) {
     emit(LoadingState());
   }
 
   // POINT: DI 모듈 초기화처럼 중요한 동작을 특정 UI 의 비즈니스에 종속시켜도 괜찮을까요?
-  Future<void> _onInitProgrammeMessage(
-      final InitProgrammeMessage message, final Emitter<SplashScreenState> emit) async {
+  // 종속성을 분리하는 것이
+  Future<void> _onInitProgrammeMessage(final InitProgrammeMessage message,
+      final Emitter<SplashScreenState> emit) async {
     // Step 1: DI module 초기화
     await ClientApplicationDi.instance.init();
     final Logger logger = ClientApplicationDi.instance.singleton(Logger);
 
     // Step 2: Load Cached User
-    final UserRepository userRepository = ClientApplicationDi.instance.singleton(UserRepository);
+    final UserRepository userRepository =
+        ClientApplicationDi.instance.singleton(UserRepository);
 
     final maybeUser = await userRepository.findSavedSelf();
     if (maybeUser == null) {
@@ -44,7 +47,8 @@ class SplashScreenBloc extends Bloc<SplashScreenMessage, SplashScreenState> {
     // Step 3: Verify Cached User
     final User maybeVerifiedUser;
     try {
-      maybeVerifiedUser = await userRepository.getUser(uuid: maybeUser.uuid, forceRefresh: true);
+      maybeVerifiedUser = await userRepository.getUser(
+          uuid: maybeUser.uuid, forceRefresh: true);
     } catch (e) {
       logger.d("User verification via API has failed", e);
       await userRepository.deleteSavedUser(maybeUser.uuid);

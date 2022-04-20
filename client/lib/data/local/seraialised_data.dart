@@ -11,6 +11,7 @@ mixin SerialisedData<T> {
   late final DateTime savedAt;
 
   // POINT: expiration check 를 외부에서 주입받는게 나을까요, 여기서 구현하는게 좋을까요?
+  // opinion: 외부에서 주입받는게 낫다. 왜? static으로 기본값을 정해둘 수 있는 상황이 아니기 때문이다.
   bool isExpired({final int expirationSeconds = defaultExpiredSeconds}) {
     final now = DateTime.now();
     final then = savedAt;

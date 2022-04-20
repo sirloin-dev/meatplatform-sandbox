@@ -10,7 +10,8 @@ import 'package:sirloin_sandbox_client/screen/screen_splash.dart';
 class ClientApplication extends StatelessWidget {
   final FlutterI18nDelegate flutterI18nDelegate;
 
-  const ClientApplication({Key? key, required this.flutterI18nDelegate}) : super(key: key);
+  const ClientApplication({Key? key, required this.flutterI18nDelegate})
+      : super(key: key);
 
   @override
   Widget build(final BuildContext context) {
@@ -18,7 +19,7 @@ class ClientApplication extends StatelessWidget {
       // POINT 여기 App 이름을 Locale 에 맞게 바꾸려면 어떻게 해야 할까요?
       title: "sirloin-sandbox-client",
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
       ),
       home: const SplashScreen(),
       localizationsDelegates: [
