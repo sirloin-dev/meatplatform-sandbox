@@ -12,8 +12,8 @@ typedef ResponseTypeToObject<T> = T Function();
 
 @immutable
 class ResponseType {
-  static const ok = ResponseType("ok");
-  static const error = ResponseType("error");
+  static const ok = ResponseType("OK");
+  static const error = ResponseType("ERROR");
 
   final String value;
 
