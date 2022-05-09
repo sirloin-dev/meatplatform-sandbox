@@ -16,5 +16,3 @@ bin
 build_number.properties
 api-main/src/main/resources/build_api-main.json
 
-# Application config
-/application.yml

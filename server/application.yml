@@ -25,7 +25,7 @@ spring:
     url: jdbc:mysql://localhost:8306/sirloin_sandbox?serverTimezone=UTC&useUnicode=true&character_set_server=utf8mb4;
     username: root
     # docker/run_mysql.sh 를 실행할 때 입력한 root password 를 여기 적어주세요.
-    password:
+    password: ${PLATFORM_SANDBOX_SECRET}
   web:
     resources:
       add-mappings: false
