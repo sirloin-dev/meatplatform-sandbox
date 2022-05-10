@@ -1,0 +1,6 @@
+# IDE specific files
+.idea
+.project
+*.iml
+*.ipr
+*.iws
