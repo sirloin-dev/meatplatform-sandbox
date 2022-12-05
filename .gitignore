@@ -1,3 +1,13 @@
+# System-dependent autogen file
+.DS_Store
+desktop.ini
+
+# Build outputs
+.gradle
+build
+out
+bin
+
 # IDE specific files
 .idea
 .project

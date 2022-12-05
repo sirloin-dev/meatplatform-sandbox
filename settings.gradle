@@ -1,0 +1,8 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+rootProject.name = "meatplatform-sandbox"
+
+include ":app-server",
+        ":app-client"
