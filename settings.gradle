@@ -1,0 +1,8 @@
+/*
+ * bondaero-api
+ * Sir.LOIN Intellectual property. All rights reserved.
+ */
+rootProject.name = "meatplatform-sandbox"
+
+include ":app-server",
+        ":app-client"
