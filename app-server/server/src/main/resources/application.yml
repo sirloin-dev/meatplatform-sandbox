@@ -1,0 +1,33 @@
+#
+# meatplatform-sandbox
+# Distributed under CC BY-NC-SA
+#
+server:
+  port: ${MEATPLATFORM_SANDBOX_API_PORT:8080}
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: meatplatform-sandbox-server
+  profiles:
+    # local, alpha, beta, release, test
+    active: ${MEATPLATFORM_SANDBOX_API_PROFILE:local}
+  web:
+    resources:
+      add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+sandboxapp:
+  client:
+    minVersion: "1.0.0"
+    defaultWebUrl: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+    updateUri:
+      android: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      ios: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      web: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      windows: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      linux: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      macos: "https://github.dev/sirloin-dev/meatplatform-sandbox"

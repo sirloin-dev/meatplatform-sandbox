@@ -1,0 +1,20 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+version version_app_server
+
+apply from: "${project.rootDir}/gradle/scripts/springBootCommon.gradle"
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    def MODULE_CORE = ":$APP_SERVER:core"
+
+    // Project dependencies
+    implementation project(MODULE_CORE)
+
+    testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
+}

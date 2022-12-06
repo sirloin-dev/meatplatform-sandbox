@@ -1,0 +1,25 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+apply plugin: "kotlin"
+apply plugin: "kotlin-allopen"
+
+compileKotlin {
+    kotlinOptions.allWarningsAsErrors = true
+    kotlinOptions.jvmTarget = "$version_target_jvm"
+}
+
+compileTestKotlin {
+    kotlinOptions.allWarningsAsErrors = true
+    kotlinOptions.jvmTarget = "$version_target_jvm"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+}
+
+allOpen {
+
+}

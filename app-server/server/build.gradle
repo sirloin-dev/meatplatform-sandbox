@@ -2,26 +2,25 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
-apply from: "$project.rootDir/gradle/scripts/testFailAggregation.gradle"
+version version_app_server
 
-ext {
-    // Export settings (프로젝트 모듈 외부 export 시 버전명)
-    version_app_server = "1.0.0"
+apply plugin: "org.springframework.boot"
 
-    // Project 내부에서 사용
-    APP_SERVER = "app-server"
+apply from: "${project.rootDir}/gradle/scripts/sourceSets.gradle"
+apply from: "${project.rootDir}/gradle/scripts/springBootCommon.gradle"
+apply from: "${project.rootDir}/gradle/scripts/springBootWebMvc.gradle"
+
+dependencies {
+    def MODULE_CORE = ":$APP_SERVER:core"
+    def MODULE_INFRA = ":$APP_SERVER:infra"
+
+    // Project dependencies
+    implementation project(MODULE_CORE)
+    implementation project(MODULE_INFRA)
+
+    testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
+    testImplementation project(path: MODULE_INFRA, configuration: "testArtifacts")
 }
-
-tasks.register("cleanAll")
-tasks.register("detektAll")
-tasks.register("testAll")
-
-subprojects { pr ->
-    cleanAll.dependsOn("${pr.path}:clean")
-    detektAll.dependsOn("${pr.path}:detekt")
-    testAll.dependsOn("${pr.path}:test")
-}
-
 
 // compileJava -> processResources -> classes 순으로 gradle task 실행
 processResources.doFirst {
@@ -46,3 +45,5 @@ processResources.doFirst {
     project.version = version
     println("Project version has been overriden to ${project.version}")
 }
+
+jar.dependsOn bootJar

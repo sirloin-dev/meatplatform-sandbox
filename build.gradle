@@ -2,3 +2,91 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
+buildscript {
+    ext {
+        // lang
+        version_target_jvm = 17
+        version_kotlin = "1.7.22"
+        version_javax_validation = "2.0.1.Final"
+        version_javax_inject = "1"
+        version_jsr305 = "3.0.2"
+
+        // First party Libs
+        version_sirloin_jvmlib = "1.2.2"
+
+        // Spring Framework
+        version_springBoot = "3.0.0"
+        version_springBootTest = "3.0.0"
+
+        // Mariadb
+        version_mariadb = "3.1.0"
+
+        // Third party libs
+        version_slf4j = "2.0.5"
+
+        // Testing & Code quality
+        version_junit5 = "5.9.0"
+        version_detekt = "1.22.0"
+        version_kotest = "5.5.4"
+        version_mockito = "4.9.0"
+        version_mockitoKotlin = "4.1.0"
+        version_javaFaker = "1.0.2"
+        version_asciidoctor = "3.3.2"
+        version_jacoco = "0.8.8"
+
+        // Infrastructure
+        version_servlet = "2.3.0.Final"
+        version_h2database = "2.1.214"
+        version_testcontainers = "1.17.3"
+        version_jackson = "2.14.1"
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/plugins-release" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlin"
+
+        // Spring
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$version_springBoot"
+        // https://kotlinlang.org/docs/reference/compiler-plugins.html
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$version_kotlin"
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$version_kotlin"
+
+        // Testing & Code quality
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$version_detekt"
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:$version_asciidoctor"
+    }
+}
+
+group "net.meatplatform.sandbox"
+
+allprojects {
+    apply plugin: "idea"
+    apply from: "$rootDir/gradle/scripts/java.gradle"
+    apply from: "$rootDir/gradle/scripts/kotlin.gradle"
+    apply from: "$rootDir/gradle/scripts/detekt.gradle"
+    apply from: "$rootDir/gradle/scripts/testing.gradle"
+    apply from: "$rootDir/gradle/scripts/jacoco.gradle"
+
+    repositories {
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        // Sir.LOIN jvm libs
+        implementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-annotation:$version_sirloin_jvmlib"
+        implementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-crypto:$version_sirloin_jvmlib"
+        implementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-net:$version_sirloin_jvmlib"
+        implementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-text:$version_sirloin_jvmlib"
+        implementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-time:$version_sirloin_jvmlib"
+        implementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-util:$version_sirloin_jvmlib"
+
+        testImplementation "com.github.sirloin-dev.sirloin-jvmlib:sirloin-jvmlib-test:$version_sirloin_jvmlib"
+    }
+}

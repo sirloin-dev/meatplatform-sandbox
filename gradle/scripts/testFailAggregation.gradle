@@ -1,0 +1,132 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+import groovy.time.TimeCategory
+import org.gradle.api.internal.tasks.testing.results.DefaultTestResult
+import org.gradle.internal.logging.text.StyledTextOutput.Style
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+
+ext.failedTests = []
+ext.testsResults = []
+
+class TestRecord {
+    final String projectName
+    final String taskName
+    final String reportPath
+    final DefaultTestResult result
+
+    TestRecord(final String projectName,
+               final String taskName,
+               final String reportPath,
+               final DefaultTestResult result
+    ) {
+        this.projectName = projectName
+        this.taskName = taskName
+        this.reportPath = reportPath
+        this.result = result
+    }
+
+    String moduleSummary() {
+        return "${projectName}:${taskName}"
+    }
+
+    String resultSummary() {
+        return "${result.resultType}"
+    }
+
+    String testSummary() {
+        return "${result.testCount} tests, " +
+                "${result.successfulTestCount} successes, " +
+                "${result.failedTestCount} failures, " +
+                "${result.skippedTestCount} skipped"
+    }
+
+    String timeSummary() {
+        return "in ${TimeCategory.minus(new Date(result.endTime), new Date(result.startTime))}"
+    }
+
+    String reportFileSummary() {
+        return "Report file: ${reportPath}"
+    }
+
+    @Override
+    String toString() {
+        return "${moduleSummary()} ${resultSummary()}\n" +
+                "${testSummary()} ${timeSummary()}\n" +
+                "${reportFileSummary()}\n"
+    }
+}
+
+allprojects {
+    tasks.withType(Test) { testTask ->
+        afterTest { desc, result ->
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                failedTests << "${desc.className}#${desc.name}"
+            }
+        }
+
+        afterSuite { desc, result ->
+            // Only summarize results for whole modules
+            if (desc.parent) {
+                return
+            }
+
+            testsResults += new TestRecord(
+                    testTask.project.name,
+                    testTask.name,
+                    testTask.reports.html.entryPoint.absolutePath,
+                    result
+            )
+        }
+    }
+}
+
+gradle.buildFinished {
+    def out = services.get(StyledTextOutputFactory).create("ansi-output")
+
+    def printResult = { report ->
+        def styleBuilder = out.style(Style.Normal).text("${report.moduleSummary()} ")
+
+        def resultStyle
+        switch (report.result.resultType) {
+            case TestResult.ResultType.SUCCESS:
+                resultStyle = Style.Success
+                break
+            case TestResult.ResultType.FAILURE:
+                resultStyle = Style.Failure
+                break
+            case TestResult.ResultType.SKIPPED:
+                resultStyle = Style.Info
+                break
+            default:
+                resultStyle = Style.Normal
+        }
+
+        styleBuilder.style(resultStyle).text("${report.resultSummary()}\n")
+                .style(Style.Normal).text("${report.testSummary()} ${report.timeSummary()}\n")
+                .text(report.reportFileSummary())
+                .println()
+    }
+
+    def allResults = testsResults
+    if (!allResults.isEmpty()) {
+        def maxLength = allResults.toListString().readLines().flatten().collect { it.length() }.max()
+        println("${"=" * maxLength}")
+        allResults.forEach { printResult it }
+        println("${"=" * maxLength}")
+    }
+
+    if (allResults.any { it.result.resultType == TestResult.ResultType.FAILURE }) {
+        if (!failedTests.empty) {
+            out.style(Style.Failure).println("\nFailed tests summary:")
+            failedTests.each {
+                println "  $it"
+            }
+        }
+    }
+
+    if (allResults.any { it.result.resultType == TestResult.ResultType.SKIPPED }) {
+        out.style(Style.Info).println("There were some skipped tests. Please review them.")
+    }
+}

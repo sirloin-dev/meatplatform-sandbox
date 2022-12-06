@@ -1,0 +1,13 @@
+#
+# meatplatform-sandbox
+# Distributed under CC BY-NC-SA
+#
+logging:
+  file:
+    path: ${MEATPLATFORM_SANDBOX_API_LOG_PATH}
+
+  level:
+    ROOT: INFO
+    net.meatplatform: INFO
+    # Exception Response Decorator 에서 모든 예외 log 를 출력하기 때문에, OFF 처리
+    io.undertow.request: OFF

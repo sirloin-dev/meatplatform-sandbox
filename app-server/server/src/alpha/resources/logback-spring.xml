@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- LOG_PATH will be set as the value of logging.path of application.properties if not defined at here -->
+    <!--<property name="LOG_PATH" value="/var/temp/log/" />-->
+    <springProperty name="spring.application.name" source="spring.application.name"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level ${PID} [%16.-16t] %-40.40logger{39} : %msg%n</Pattern>
+        </encoder>
+
+        <file>${LOG_PATH}/${spring.application.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH}/archives/${spring.application.name}-%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <root level="VERBOSE">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <root level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <root level="WARN">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <root level="ERROR">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

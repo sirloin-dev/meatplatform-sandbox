@@ -1,0 +1,13 @@
+#
+# meatplatform-sandbox
+# Distributed under CC BY-NC-SA
+#
+logging:
+  level:
+    ROOT: INFO
+    net.meatplatform: TRACE
+    # Exception Response Decorator 에서 모든 예외 log 를 출력하기 때문에, OFF 처리
+    io.undertow.request: OFF
+    org.springframework.web.servlet: TRACE
+    org.springframework.web.filter: TRACE
+    # org.hibernate.type.descriptor.sql.BasicBinder: TRACE

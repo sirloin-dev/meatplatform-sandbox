@@ -1,0 +1,114 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
+/**
+ * Groupising tests for JUnit5
+ *
+ * https://docs.gradle.org/current/userguide/java_testing.html#test_grouping
+ * https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
+ */
+def TAG_TEST_SMALL = "smallTest"
+def TAG_TEST_MEDIUM = "mediumTest"
+def TAG_TEST_LARGE = "largeTest"
+
+dependencies {
+    // JUnit5
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$version_junit5"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$version_junit5"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$version_junit5"
+
+    // Test utilities
+    testImplementation "org.mockito:mockito-core:$version_mockito"
+    testImplementation "org.mockito:mockito-junit-jupiter:$version_mockito"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$version_mockitoKotlin"
+    testImplementation "io.kotest:kotest-runner-junit5:$version_kotest"
+
+    // JavaFaker (FixtureMonkey 를 쓰려고 했으나 Kotlin 과 잘 맞지 않는 문제가 있음)
+    // 내부적으로 snakeyaml android artifact 를 의존하고 있어 빌드가 안 되는 문제를 해결
+    testImplementation("com.github.javafaker:javafaker:$version_javaFaker") {
+         exclude group: "org.yaml", module: "snakeyaml"
+    }
+    testImplementation("org.yaml:snakeyaml:1.33")
+}
+
+allOpen {
+    annotation("test.com.sirloin.annotation.SmallTest")
+    annotation("test.com.sirloin.annotation.MediumTest")
+    annotation("test.com.sirloin.annotation.LargeTest")
+}
+
+check.dependsOn test
+
+configurations {
+    testArtifacts.extendsFrom testRuntime
+}
+
+task testJar(type: Jar) {
+    classifier "test"
+    from sourceSets.test.output
+}
+
+artifacts {
+    testArtifacts testJar
+}
+
+tasks.withType(Test) {
+    group "verification"
+
+    testLogging {
+        events TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.STANDARD_OUT, TestLogEvent.STANDARD_ERROR
+
+        outputs.upToDateWhen { false }
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task smallTest(type: Test) {
+    useJUnitPlatform {
+        includeTags TAG_TEST_SMALL
+        excludeTags "*"
+    }
+}
+
+task mediumTest(type: Test) {
+    useJUnitPlatform {
+        includeTags TAG_TEST_MEDIUM
+        excludeTags "*"
+    }
+}
+
+task largeTest(type: Test) {
+    useJUnitPlatform {
+        includeTags TAG_TEST_LARGE
+        excludeTags "*"
+    }
+}
+
+// https://docs.gradle.org/current/userguide/java_testing.html#test_reporting
+configurations {
+    testReportData {
+        canBeResolved = true
+        canBeConsumed = false
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, 'test-report-data'))
+        }
+    }
+}
+
+tasks.register("testReport", TestReport) {
+    destinationDir = layout.buildDirectory.dir("reports/allTests").get().asFile
+    // Use test results from testReportData configuration
+    testResultDirs.from(configurations.testReportData)
+}
