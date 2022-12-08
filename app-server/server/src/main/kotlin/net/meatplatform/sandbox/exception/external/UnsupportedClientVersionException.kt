@@ -13,13 +13,13 @@ import net.meatplatform.sandbox.exception.ExternalException
  */
 internal class UnsupportedClientVersionException(
     private val requiredVersion: SemanticVersion,
-    private val updateUri: String,
+    updateUri: String,
     override val message: String = "Minimum version $requiredVersion is required.",
     override val cause: Throwable? = null
 ) : ExternalException(ErrorCodeBook.UNSUPPORTED_CLIENT_VERSION, message, cause) {
-    override fun messageArguments(): Array<String> = arrayOf(requiredVersion.toString())
+    override val messageArguments: Array<String> = arrayOf(requiredVersion.toString())
 
-    override fun details(): Any = UpdateInfo(requiredVersion.toString(), updateUri)
+    override val details: Any = UpdateInfo(requiredVersion.toString(), updateUri)
 
     /**
      * 지원되지 않는 클라이언트 버전 예외 발생시,

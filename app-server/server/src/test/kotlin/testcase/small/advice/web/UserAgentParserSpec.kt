@@ -5,11 +5,10 @@
 package testcase.small.advice.web
 
 import com.sirloin.jvmlib.util.SemanticVersion
-import com.sirloin.jvmlib.util.SemanticVersionParser
 import io.kotest.matchers.shouldBe
-import net.meatplatform.sandbox.advice.web.UserAgentParser
-import net.meatplatform.sandbox.advice.web.UserAgentParser.APP_NAME
-import net.meatplatform.sandbox.advice.web.UserAgentParser.UA_DELIMITER
+import net.meatplatform.sandbox.advice.UserAgentParser
+import net.meatplatform.sandbox.advice.UserAgentParser.APP_NAME
+import net.meatplatform.sandbox.advice.UserAgentParser.UA_DELIMITER
 import net.meatplatform.sandbox.util.ClientDevicePlatform
 import net.meatplatform.sandbox.util.ClientInfo
 import org.junit.jupiter.api.DisplayName

@@ -4,7 +4,7 @@
  */
 package testcase.small.advice.web
 
-import net.meatplatform.sandbox.advice.web.AcceptLanguageLocaleProvider
+import net.meatplatform.sandbox.advice.AcceptLanguageLocaleProvider
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -29,20 +29,23 @@ internal class AcceptLanguageLocaleProviderSpec {
         @MethodSource("testcase.small.advice.web.AcceptLanguageLocaleProviderSpec#acceptLanguageNullOrEmptyParams")
         fun acceptLanguageIsEmpty(acceptLanguage: String?) {
             // given:
-            val sut = initSut(acceptLanguage)
+            val sut = initSut()
 
             // expect:
-            assertThat(sut.locale, `is`(AcceptLanguageLocaleProvider.DEFAULT))
+            assertThat(sut.resolveLocale(acceptLanguage), `is`(AcceptLanguageLocaleProvider.DEFAULT))
         }
 
         @DisplayName("이상한 문자열일때, 로케일은 AcceptLanguageLocaleProvider.DEFAULT 가 된다")
         @Test
         fun acceptLanguageIsIllegal() {
             // given:
-            val sut = initSut(randomAlphanumeric())
+            val acceptLanguage = randomAlphanumeric()
+
+            // then:
+            val result = initSut().resolveLocale(acceptLanguage)
 
             // expect:
-            assertThat(sut.locale, `is`(AcceptLanguageLocaleProvider.DEFAULT))
+            assertThat(result, `is`(AcceptLanguageLocaleProvider.DEFAULT))
         }
     }
 
@@ -53,34 +56,43 @@ internal class AcceptLanguageLocaleProviderSpec {
         @Test
         fun acceptLanguageIsUnsupported() {
             // given:
-            val sut = initSut("nl")   // 네덜란드
+            val acceptLanguage = "nl"   // 네덜란드
+
+            // then:
+            val result = initSut().resolveLocale(acceptLanguage)
 
             // expect:
-            assertThat(sut.locale, `is`(AcceptLanguageLocaleProvider.DEFAULT))
+            assertThat(result, `is`(AcceptLanguageLocaleProvider.DEFAULT))
         }
 
         @DisplayName("Weight 가 가장 높은 로케일을 선택한다")
         @Test
-        fun highestWeightIsSelected() {
+        fun highestWeghtIsSelected() {
             // given:
-            val sut = initSut("ko, en-GB;q=0.8, en;q=0.7")
+            val acceptLanguage = "ko, en-GB;q=0.8, en;q=0.7"
+
+            // then:
+            val result = initSut().resolveLocale(acceptLanguage)
 
             // expect:
-            assertThat(sut.locale, `is`(Locale.KOREAN))
+            assertThat(result, `is`(Locale.KOREAN))
         }
 
         @DisplayName("비슷한 언어를 선택한다")
         @Test
         fun similarLocaleIsSelected() {
             // given:
-            val sut = initSut("en-GB")
+            val acceptLanguage = "en-GB"
+
+            // then:
+            val result = initSut().resolveLocale(acceptLanguage)
 
             // expect:
-            assertThat(sut.locale, `is`(Locale.ENGLISH))
+            assertThat(result, `is`(Locale.ENGLISH))
         }
     }
 
-    private fun initSut(acceptLanguage: String?) = AcceptLanguageLocaleProvider(acceptLanguage)
+    private fun initSut() = AcceptLanguageLocaleProvider()
 
     companion object {
         @JvmStatic

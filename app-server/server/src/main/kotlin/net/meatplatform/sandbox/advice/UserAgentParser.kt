@@ -2,7 +2,7 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
-package net.meatplatform.sandbox.advice.web
+package net.meatplatform.sandbox.advice
 
 import com.sirloin.jvmlib.util.SemanticVersionParser
 import net.meatplatform.sandbox.util.ClientDevicePlatform

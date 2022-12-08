@@ -11,6 +11,6 @@ import java.util.*
  *
  * @since 2022-02-14
  */
-interface LocaleProvider {
-    val locale: Locale
+interface LocaleProvider<T> {
+    fun resolveLocale(context: T): Locale
 }
