@@ -18,8 +18,9 @@ buildscript {
         version_springBoot = "3.0.0"
         version_springBootTest = "3.0.0"
 
-        // Mariadb
+        // Infrastructure
         version_mariadb = "3.1.0"
+        version_hikariCP = "5.0.1"
 
         // Third party libs
         version_slf4j = "2.0.5"

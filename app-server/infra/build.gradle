@@ -13,8 +13,18 @@ jar {
 dependencies {
     def MODULE_CORE = ":$APP_SERVER:core"
 
+    // Spring Data & MariaDB
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "com.zaxxer:HikariCP:$version_hikariCP"
+    implementation "org.mariadb.jdbc:mariadb-java-client:$version_mariadb"
+
     // Project dependencies
     implementation project(MODULE_CORE)
 
     testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
 }

@@ -11,3 +11,10 @@ logging:
     org.springframework.web.servlet: TRACE
     org.springframework.web.filter: TRACE
     # org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true

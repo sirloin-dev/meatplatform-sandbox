@@ -21,5 +21,6 @@ dependencies {
 }
 
 allOpen {
-
+    annotation("net.meatplatform.sandbox.annotation.OpenForTesting")
+    annotation("net.meatplatform.sandbox.annotation.UseCase")
 }

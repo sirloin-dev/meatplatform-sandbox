@@ -3,7 +3,7 @@
 # Distributed under CC BY-NC-SA
 #
 server:
-  port: ${MEATPLATFORM_SANDBOX_API_PORT:8080}
+  port: ${SANDBOXAPP_SERVER_PORT:8080}
   error:
     whitelabel:
       enabled: false
@@ -13,12 +13,27 @@ spring:
     name: meatplatform-sandbox-server
   profiles:
     # local, alpha, beta, release, test
-    active: ${MEATPLATFORM_SANDBOX_API_PROFILE:local}
+    active: ${SANDBOXAPP_SERVER_PROFILE:local}
   web:
     resources:
       add-mappings: false
   mvc:
     throw-exception-if-no-handler-found: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  sql:
+    init:
+      mode: ALWAYS
+      schema-locations: classpath:/sql/schema/*.sql
+      # data-locations: classpath:/sql/data/*.sql
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${SANDBOXAPP_SERVER_MYSQL_HOST}:${SANDBOXAPP_SERVER_MYSQL_PORT}/${SANDBOXAPP_SERVER_MYSQL_DB}?serverTimezone=UTC&useUnicode=true&character_set_server=utf8mb4;
+    username: ${SANDBOXAPP_SERVER_MYSQL_USERNAME}
+    password: ${SANDBOXAPP_SERVER_MYSQL_PASSWORD}
 
 sandboxapp:
   client:

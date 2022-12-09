@@ -5,7 +5,7 @@
 package net.meatplatform.sandbox.endpoint.v1
 
 /**
- * @since 2022-12-08
+ * @since 2022-02-14
  */
 object ApiPathsV1 {
     const val V1 = "/v1"
