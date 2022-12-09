@@ -22,6 +22,8 @@ dependencies {
     implementation project(MODULE_CORE)
 
     testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
+
+    testImplementation "com.h2database:h2:$version_h2database"
 }
 
 allOpen {

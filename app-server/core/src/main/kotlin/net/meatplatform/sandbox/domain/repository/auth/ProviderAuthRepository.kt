@@ -10,5 +10,7 @@ import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
  * @since 2022-02-14
  */
 interface ProviderAuthRepository {
-    fun verify(type: ProviderAuthentication.Type, providerAuthToken: String): ProviderAuthentication
+    fun verifyProviderAuth(type: ProviderAuthentication.Type, providerAuthToken: String): ProviderAuthentication
+
+    fun findByIdentity(type: ProviderAuthentication.Type, providerId: String): ProviderAuthentication?
 }

@@ -1,6 +1,6 @@
 /*
- * bondaero-api
- * Sir.LOIN Intellectual property. All rights reserved.
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
  */
 package net.meatplatform.sandbox.util
 

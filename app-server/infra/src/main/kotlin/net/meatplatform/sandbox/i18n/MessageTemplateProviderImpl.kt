@@ -32,6 +32,7 @@ internal class MessageTemplateProviderImpl : MessageTemplateProvider {
             ErrorCodeBook.WRONG_INPUT -> "''{0}'' 은 잘못된 입력입니다."
             ErrorCodeBook.MALFORMED_INPUT -> "요청 형식이 잘못되었습니다."
             ErrorCodeBook.UNSUPPORTED_CLIENT_VERSION -> "최소 버전 {0} 이상의 클라이언트를 이용하세요."
+            ErrorCodeBook.USER_ALREADY_REGISTERED -> "''{0}'' 은 이미 등록한 이메일 주소입니다."
             ErrorCodeBook.UNHANDLED_EXCEPTION -> "알 수 없는 오류가 발생했습니다."
         }
     )

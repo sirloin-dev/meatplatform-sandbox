@@ -6,6 +6,7 @@ package net.meatplatform.sandbox.jpa.entity.user
 
 import com.sirloin.jvmlib.util.EMPTY_UUID
 import jakarta.persistence.*
+import net.meatplatform.sandbox.jpa.converter.UuidConverter
 import net.meatplatform.sandbox.jpa.entity.common.SoftDeletableEmbedded
 import java.util.*
 
@@ -22,13 +23,13 @@ internal class UserEntity {
     var seq: Long = -1L
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "BINARY(16)")
+    @Convert(converter = UuidConverter::class)
     var id: UUID = EMPTY_UUID
 
     @Column(name = "nickname")
     var nickname: String = ""
 
-    @Lob
     @Column(name = "profile_image_url", columnDefinition = "TEXT")
     var profileImageUrl: String? = null
 

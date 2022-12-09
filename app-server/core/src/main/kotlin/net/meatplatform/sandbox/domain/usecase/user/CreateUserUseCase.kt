@@ -9,6 +9,7 @@ import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.model.user.User
 import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
 import net.meatplatform.sandbox.domain.repository.user.UserRepository
+import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
 import net.meatplatform.sandbox.util.PasswordEncoderMixin
 
 /**
@@ -48,10 +49,17 @@ internal class CreateUserUseCaseImpl(
                             name = ""
                         )
 
-                        else -> providerAuths.verify(authenticationType, providerAuthToken!!)
+                        else -> providerAuths.verifyProviderAuth(authenticationType, providerAuthToken!!)
                     }
                 )
             )
+        }
+
+        val auth = newUser.authentications.first()
+        val maybePrevious = providerAuths.findByIdentity(auth.type, auth.providerId)
+
+        if (maybePrevious != null) {
+            throw UserWithProviderIdentityAlreadyExist(auth.type, auth.providerId)
         }
 
         return users.save(newUser)

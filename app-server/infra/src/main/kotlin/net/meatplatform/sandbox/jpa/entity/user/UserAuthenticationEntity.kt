@@ -33,7 +33,6 @@ internal class UserAuthenticationEntity {
     @Column(name = "provider_id")
     var providerId: String = ""
 
-    @Lob
     @Column(name = "password", columnDefinition = "TEXT")
     var password: String? = null
 

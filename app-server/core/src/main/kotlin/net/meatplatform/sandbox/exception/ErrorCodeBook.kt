@@ -31,6 +31,9 @@ enum class ErrorCodeBook(
     UNSUPPORTED_CLIENT_VERSION(
         code = "E-00000010", "지원하지 않는 클라이언트 버전. 클라이언트는 이 오류를 수신한 경우, 강제 업데이트 단계로 이행해야 합니다."
     ),
+    USER_ALREADY_REGISTERED(
+        code = "E-00000020", "지원하지 않는 클라이언트 버전. 클라이언트는 이 오류를 수신한 경우, 강제 업데이트 단계로 이행해야 합니다."
+    ),
     UNHANDLED_EXCEPTION(
         code = "E-99999999", "서버에서 오류 처리를 잘못한 경우 발생합니다."
     );

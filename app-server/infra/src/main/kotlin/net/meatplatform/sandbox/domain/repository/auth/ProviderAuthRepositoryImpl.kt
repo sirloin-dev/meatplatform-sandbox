@@ -14,7 +14,14 @@ import org.springframework.transaction.annotation.Transactional
 @InfrastructureService
 internal class ProviderAuthRepositoryImpl : ProviderAuthRepository {
     @Transactional
-    override fun verify(type: ProviderAuthentication.Type, providerAuthToken: String): ProviderAuthentication {
+    override fun verifyProviderAuth(
+        type: ProviderAuthentication.Type,
+        providerAuthToken: String
+    ): ProviderAuthentication {
+        TODO("Not yet implemented")
+    }
+
+    override fun findByIdentity(type: ProviderAuthentication.Type, providerId: String): ProviderAuthentication? {
         TODO("Not yet implemented")
     }
 }

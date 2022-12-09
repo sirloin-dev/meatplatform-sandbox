@@ -9,9 +9,11 @@ import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
 import net.meatplatform.sandbox.domain.repository.user.UserRepository
 import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
 import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCaseImpl
+import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -36,7 +38,7 @@ class CreateUserUseCaseSpec {
         sut = CreateUserUseCaseImpl(providerAuths, users)
 
         // 수정필요
-        `when`(providerAuths.verify(any(), any())).thenAnswer {
+        `when`(providerAuths.verifyProviderAuth(any(), any())).thenAnswer {
             ProviderAuthentication.random(type = it.arguments[0] as ProviderAuthentication.Type)
         }
         `when`(users.save(any())).thenAnswer { it.arguments[0] }
@@ -53,5 +55,25 @@ class CreateUserUseCaseSpec {
 
         // expect:
         expectCreatedUser(result, isReflecting = message)
+    }
+
+    @DisplayName("이미 등록한 Provider Authentication 으로 또 이용자를 등록할 수 없다.")
+    @Test
+    fun userWithDuplicateEmailNotAllowed() {
+        // given:
+        val message = CreateUserUseCaseMessageImpl.random()
+
+        // and:
+        sut.createUser(message)
+
+        // when:
+        `when`(providerAuths.findByIdentity(any(), any())).thenReturn(
+            ProviderAuthentication.random(type = message.authenticationType, password = message.password)
+        )
+
+        // then:
+        assertThrows<UserWithProviderIdentityAlreadyExist> {
+            sut.createUser(message)
+        }
     }
 }
