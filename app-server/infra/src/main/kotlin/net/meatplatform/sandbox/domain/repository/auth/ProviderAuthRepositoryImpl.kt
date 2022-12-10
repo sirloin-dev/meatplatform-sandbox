@@ -21,6 +21,7 @@ internal class ProviderAuthRepositoryImpl : ProviderAuthRepository {
         TODO("Not yet implemented")
     }
 
+    @Transactional
     override fun findByIdentity(type: ProviderAuthentication.Type, providerId: String): ProviderAuthentication? {
         TODO("Not yet implemented")
     }

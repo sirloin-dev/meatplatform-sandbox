@@ -2,11 +2,12 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
-package net.meatplatform.sandbox.jpa.entity.user
+package net.meatplatform.sandbox.jpa.entity.auth
 
 import jakarta.persistence.*
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
 import net.meatplatform.sandbox.jpa.converter.ProviderAuthenticationTypeConverter
+import net.meatplatform.sandbox.jpa.entity.user.UserEntity
 import java.util.*
 
 /**

@@ -6,9 +6,13 @@ package test.domain.usecase.user
 
 import com.github.javafaker.Faker
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.model.user.User
 import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
 import test.com.sirloin.util.random.randomEnum
+import test.domain.usecase.auth.random
 import test.util.randomAlphanumeric
+import java.time.Instant
+import java.util.*
 
 /**
  * @since 2022-02-14
@@ -51,4 +55,28 @@ data class CreateUserUseCaseMessageImpl(
             profileImageUrl = profileImageUrl
         )
     }
+}
+
+fun User.Companion.random(
+    id: UUID = UUID.randomUUID(),
+    nickname: String = Faker().funnyName().name(),
+    profileImageUrl: String? = if (Faker().random().nextBoolean()) {
+        Faker().internet().image()
+    } else {
+        null
+    },
+    authentications: Iterable<ProviderAuthentication> = setOf(ProviderAuthentication.random()),
+    createdAt: Instant? = null,
+    updatedAt: Instant? = null
+): User {
+    val now = Instant.now()
+
+    return create(
+        id = id,
+        nickname = nickname,
+        profileImageUrl = profileImageUrl,
+        authentications = authentications,
+        createdAt = createdAt ?: now,
+        updatedAt = updatedAt ?: now
+    )
 }

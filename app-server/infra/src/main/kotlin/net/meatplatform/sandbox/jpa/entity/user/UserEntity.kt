@@ -7,6 +7,7 @@ package net.meatplatform.sandbox.jpa.entity.user
 import com.sirloin.jvmlib.util.EMPTY_UUID
 import jakarta.persistence.*
 import net.meatplatform.sandbox.jpa.converter.UuidConverter
+import net.meatplatform.sandbox.jpa.entity.auth.UserAuthenticationEntity
 import net.meatplatform.sandbox.jpa.entity.common.SoftDeletableEmbedded
 import java.util.*
 
