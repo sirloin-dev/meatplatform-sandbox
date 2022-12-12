@@ -1,28 +1,21 @@
-#
-# meatplatform-sandbox
-# Distributed under CC BY-NC-SA
-#
 server:
-  port: ${SANDBOXAPP_SERVER_PORT:8080}
   error:
     whitelabel:
       enabled: false
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
-    name: meatplatform-sandbox-server
-  profiles:
-    # local, alpha, beta, release, test
-    active: ${SANDBOXAPP_SERVER_PROFILE:local}
-  web:
-    resources:
-      add-mappings: false
-  mvc:
-    throw-exception-if-no-handler-found: true
+    name: test-meatplatform-sandbox-server
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
   sql:
     init:
       mode: ALWAYS
@@ -31,9 +24,17 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${SANDBOXAPP_SERVER_MARIADB_HOST}:${SANDBOXAPP_SERVER_MARIADB_PORT}/${SANDBOXAPP_SERVER_MARIADB_DB}?serverTimezone=UTC&useUnicode=true&character_set_server=utf8mb4;
-    username: ${SANDBOXAPP_SERVER_MARIADB_USERNAME}
-    password: ${SANDBOXAPP_SERVER_MARIADB_PASSWORD}
+    url: jdbc:mariadb://localhost:53306/sandboxapp_server?serverTimezone=UTC&useUnicode=true&character_set_server=utf8mb4;
+    username: sandbox
+    password: sandbox
+
+logging:
+  level:
+    ROOT: INFO
+    net.meatplatform: TRACE
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.springframework.jdbc.core.StatementCreatorUtils: TRACE
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 sandboxapp:
   client:

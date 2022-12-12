@@ -39,20 +39,20 @@ class SandboxApplication {
     companion object {
         const val APP_PACKAGE_NAME = "net.meatplatform.sandbox"
         const val INFRA_PACKAGE_NAME = "net.meatplatform.sandbox"
+        const val DEFAULT_APP_VERSION = "1.0.0"
 
         private const val BUILD_CONFIG_FILE = "build_meatplatform-sandbox-server.json"
         private const val KEY_VERSION = "version"
         private const val KEY_FINGERPRINT = "fingerprint"
         private const val KEY_PROFILE = "profile"
 
-        private const val DEFAULT_VERSION = "1.0.0"
         private const val DEFAULT_FINGERPRINT = "UNSPECIFIED"
         private val DEFAULT_APP_PROFILE = AppProfile.LOCAL
 
         val buildConfig: BuildConfig by lazy {
             val resource = SandboxApplication::class.java.classLoader.getResourceAsStream(BUILD_CONFIG_FILE)
                 ?: return@lazy BuildConfigImpl(
-                    version = DEFAULT_VERSION,
+                    version = DEFAULT_APP_VERSION,
                     fingerprint = DEFAULT_FINGERPRINT,
                     profile = DEFAULT_APP_PROFILE
                 )
@@ -60,7 +60,7 @@ class SandboxApplication {
             val nodes = ObjectMapper().readTree(resource)
 
             return@lazy BuildConfigImpl(
-                version = nodes.get(KEY_VERSION)?.asText() ?: DEFAULT_VERSION,
+                version = nodes.get(KEY_VERSION)?.asText() ?: DEFAULT_APP_VERSION,
                 fingerprint = nodes.get(KEY_FINGERPRINT)?.asText() ?: DEFAULT_FINGERPRINT,
                 profile = AppProfile.from(nodes.get(KEY_PROFILE)?.asText()) ?: DEFAULT_APP_PROFILE
             )

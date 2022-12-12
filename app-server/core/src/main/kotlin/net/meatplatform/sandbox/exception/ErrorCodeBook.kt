@@ -37,4 +37,6 @@ enum class ErrorCodeBook(
     UNHANDLED_EXCEPTION(
         code = "E-99999999", "서버에서 오류 처리를 잘못한 경우 발생합니다."
     );
+
+    companion object
 }

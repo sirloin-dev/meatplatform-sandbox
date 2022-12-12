@@ -20,6 +20,14 @@ dependencies {
 
     testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
     testImplementation project(path: MODULE_INFRA, configuration: "testArtifacts")
+
+    // REST Assured
+    testImplementation "org.springframework.restdocs:spring-restdocs-core"
+    testImplementation "org.springframework.restdocs:spring-restdocs-restassured"
+
+    // TestContainers
+    testImplementation "org.testcontainers:testcontainers:$version_testcontainers"
+    testImplementation "org.testcontainers:mariadb:$version_testcontainers"
 }
 
 // compileJava -> processResources -> classes 순으로 gradle task 실행

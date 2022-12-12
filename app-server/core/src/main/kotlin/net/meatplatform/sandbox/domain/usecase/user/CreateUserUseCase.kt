@@ -26,6 +26,16 @@ interface CreateUserUseCase {
         val nickname: String
         val profileImageUrl: String?
     }
+
+    companion object {
+        fun newInstance(
+            providerAuthRepository: ProviderAuthRepository,
+            userRepository: UserRepository
+        ): CreateUserUseCase = CreateUserUseCaseImpl(
+            providerAuths = providerAuthRepository,
+            users = userRepository
+        )
+    }
 }
 
 @UseCase
@@ -62,6 +72,6 @@ internal class CreateUserUseCaseImpl(
             throw UserWithProviderIdentityAlreadyExist(auth.type, auth.providerId)
         }
 
-        return users.save(newUser)
+        return users.create(newUser)
     }
 }

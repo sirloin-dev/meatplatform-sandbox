@@ -60,7 +60,7 @@ interface ProviderAuthentication {
             type: Type,
             providerId: String,
             password: String? = null,
-            name: String
+            name: String = ""
         ): ProviderAuthentication {
             if (type == Type.EMAIL_AND_PASSWORD && password.isNullOrUnicodeBlank()) {
                 throw IllegalArgumentException("Password must not be empty with email authentication.")

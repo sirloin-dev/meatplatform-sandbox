@@ -6,6 +6,7 @@ package net.meatplatform.sandbox.endpoint.v1
 
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonValue
+import net.meatplatform.sandbox.util.SerializableEnum
 import java.time.Instant
 
 /**
@@ -34,8 +35,17 @@ abstract class ResponseEnvelopeV1<T>(
         )
     }
 
-    enum class Type(@JsonValue val value: String) {
+    @ResponseV1
+    enum class Type(@JsonValue override val code: String) : SerializableEnum<String> {
+        @JsonPropertyDescription(DESC_TYPE_OK)
         OK("OK"),
+
+        @JsonPropertyDescription(DESC_TYPE_ERROR)
         ERROR("ERROR");
+
+        companion object {
+            const val DESC_TYPE_OK = "응답의 유형을 나타냅니다. 'OK' 또는 'ERROR' 로 표시합니다."
+            const val DESC_TYPE_ERROR = "응답의 유형을 나타냅니다. 'OK' 또는 'ERROR' 로 표시합니다."
+        }
     }
 }
