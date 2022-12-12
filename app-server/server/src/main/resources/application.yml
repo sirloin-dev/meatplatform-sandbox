@@ -35,6 +35,29 @@ spring:
     username: ${SANDBOXAPP_SERVER_MARIADB_USERNAME}
     password: ${SANDBOXAPP_SERVER_MARIADB_PASSWORD}
 
+# Spring Boot Actuator 는 서버내의 민감한 정보를 노출하기 때문에, 별도의 port 로 운영합니다.
+# 접근이 손쉬운 HTTP 로는 기능을 최대한 숨기고, JMX 를 이용한 기능만 활성화하는 편이 좋습니다.
+#
+# 하지만 이 예제에서는 SANDBOXAPP_MANAGE_PORT 의 ACL 을 별도로 설정했다고 가정하고, Shutdown 을 제외한
+# Actuator 모든 의 기능을 엽니다.
+#
+# 참고 문서: https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator
+management:
+  # Web port
+  server:
+    port: ${SANDBOXAPP_MANAGE_PORT:8284}
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health, info
+        exclude: *
+    # JMX port 설정은 https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator.jmx 를 참고하세요.
+    jmx:
+      exposure:
+        include: *
+        exclude: shutdown
+
 sandboxapp:
   client:
     minVersion: "1.0.0"

@@ -18,6 +18,8 @@ dependencies {
     implementation project(MODULE_CORE)
     implementation project(MODULE_INFRA)
 
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+
     testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
     testImplementation project(path: MODULE_INFRA, configuration: "testArtifacts")
 
