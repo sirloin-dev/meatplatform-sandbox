@@ -4,5 +4,7 @@
  */
 rootProject.name = "meatplatform-sandbox"
 
-include ":app-server",
+include ":app-server:core",
+        ":app-server:infra",
+        ":app-server:server",
         ":app-client"

@@ -1,0 +1,106 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+apply from: "$project.rootDir/gradle/scripts/console.gradle"
+
+final String getBuildConfig() {
+    // This profile list must match items in AppProfile.kt
+    def allowedBuildTargets = ["local", "alpha", "beta", "release"]
+    def buildConfig
+    if (project.hasProperty("buildConfig")) {
+        buildConfig = project.properties["buildConfig"].toString().toLowerCase(Locale.US)
+    } else {
+        buildConfig = "local"
+        println(":" + CC(LIGHT_WHITE, project.name) +
+                ": No '" + CC(LIGHT_YELLOW, "buildConfig") + "' property is specified - " +
+                CC(LIGHT_GREEN, "'$buildConfig'") + " is used by default")
+        project.ext.set("buildConfig", buildConfig)
+    }
+
+    if (!allowedBuildTargets.contains(buildConfig)) {
+        throw new IllegalArgumentException("Only these build targets are accepted: $allowedBuildTargets")
+    }
+
+    return buildConfig
+}
+
+final OutputStream runGit(final String[] args) {
+    final OutputStream stdout
+    try {
+        stdout = cmdLine(["git", *args])
+    } catch (e) {
+        throw new GradleException("Failed to execute 'git' command with args: " + args)
+    }
+
+    return stdout
+}
+
+final String getGitTag() {
+    try {
+        return runGit("tag", "--points-at").toString().trim()
+    } catch (e) {
+        printlnErr(e.message)
+        return ""
+    }
+}
+
+final String getGitSha() {
+    try {
+        return runGit("rev-parse", "--short", "HEAD").toString().trim()
+    } catch (e) {
+        printlnErr(e.message)
+        return ""
+    }
+}
+
+final int parseIntSafe(final Object value, final int defaultValue) {
+    try {
+        return Integer.parseInt(value.toString())
+    } catch (e) {
+        return defaultValue
+    }
+}
+
+final String determineBuildNumber() {
+    final KEY_VERSION = "version"
+    final KEY_BUILD_NUMBER = "buildNumber"
+    final INITIAL_BUILD_NUMBER = 0
+    final PROJECT_VERSION = project.version.toString()
+
+    final Properties p = new Properties()
+    p.setProperty(KEY_VERSION, PROJECT_VERSION)
+    p.setProperty(KEY_BUILD_NUMBER, "${INITIAL_BUILD_NUMBER}")
+    String version = p.getProperty(KEY_VERSION)
+    int buildNumber = parseIntSafe(p.getProperty(KEY_BUILD_NUMBER), INITIAL_BUILD_NUMBER)
+
+    final File buildNumberFile = new File(project.projectDir, "build_number.properties")
+    if (buildNumberFile.exists()) {
+        try (final FileInputStream fi = new FileInputStream(buildNumberFile)) {
+            p.load(fi)
+        }
+        final String latestVersion = p.getOrDefault(KEY_VERSION, PROJECT_VERSION)
+        if (version == latestVersion) {
+            buildNumber = parseIntSafe(
+                    p.getOrDefault(KEY_BUILD_NUMBER, "${INITIAL_BUILD_NUMBER}"), INITIAL_BUILD_NUMBER
+            )
+        } else {
+            version = PROJECT_VERSION
+            buildNumber = INITIAL_BUILD_NUMBER
+        }
+    }
+
+    ++buildNumber
+    try (final FileOutputStream fo = new FileOutputStream(buildNumberFile)) {
+        p.setProperty(KEY_VERSION, version)
+        p.setProperty(KEY_BUILD_NUMBER, "${buildNumber}")
+        p.store(fo, null)
+    }
+
+    return buildNumber.toString()
+}
+
+ext.getBuildConfig = { getBuildConfig() }
+ext.getGitSha = { getGitSha() }
+ext.getGitTag = { getGitTag() }
+ext.determineBuildNumber = { determineBuildNumber() }

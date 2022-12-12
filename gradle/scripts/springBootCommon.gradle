@@ -1,0 +1,27 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+apply plugin: "kotlin-spring"
+apply plugin: "io.spring.dependency-management"
+
+dependencies {
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:$version_springBoot"
+    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:$version_springBoot"
+    compileOnly "org.springframework.boot:spring-boot-configuration-processor:$version_springBoot"
+
+    // Spring boot common
+    implementation "org.springframework.boot:spring-boot-starter:$version_springBoot"
+    implementation "org.springframework.boot:spring-boot-starter-validation:$version_springBoot"
+
+    // Spring boot test
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$version_springBootTest") {
+        exclude group: "com.vaadin.external.google", module: "android-json"
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:$version_springBoot"
+    }
+}

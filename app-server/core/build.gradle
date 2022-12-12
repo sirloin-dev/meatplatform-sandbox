@@ -1,0 +1,13 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+version version_app_server
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    implementation "org.slf4j:slf4j-api:$version_slf4j"
+}

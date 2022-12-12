@@ -1,0 +1,3 @@
+# 빌드시 자동생성되는 파일
+server/build_number.properties
+server/src/main/resources/build_meatplatform-sandbox-server.json

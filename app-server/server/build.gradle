@@ -1,0 +1,57 @@
+/*
+ * meatplatform-sandbox
+ * Distributed under CC BY-NC-SA
+ */
+version version_app_server
+
+apply plugin: "org.springframework.boot"
+
+apply from: "${project.rootDir}/gradle/scripts/sourceSets.gradle"
+apply from: "${project.rootDir}/gradle/scripts/springBootCommon.gradle"
+apply from: "${project.rootDir}/gradle/scripts/springBootWebMvc.gradle"
+
+dependencies {
+    def MODULE_CORE = ":$APP_SERVER:core"
+    def MODULE_INFRA = ":$APP_SERVER:infra"
+
+    // Project dependencies
+    implementation project(MODULE_CORE)
+    implementation project(MODULE_INFRA)
+
+    testImplementation project(path: MODULE_CORE, configuration: "testArtifacts")
+    testImplementation project(path: MODULE_INFRA, configuration: "testArtifacts")
+
+    // REST Assured
+    testImplementation "org.springframework.restdocs:spring-restdocs-core"
+    testImplementation "org.springframework.restdocs:spring-restdocs-restassured"
+
+    // TestContainers
+    testImplementation "org.testcontainers:testcontainers:$version_testcontainers"
+    testImplementation "org.testcontainers:mariadb:$version_testcontainers"
+}
+
+// compileJava -> processResources -> classes 순으로 gradle task 실행
+processResources.doFirst {
+    String version = getGitTag()
+    if (version.isEmpty()) {
+        version = "${project.version}+${determineBuildNumber()}"
+    }
+
+    // Write JSON as resources
+    final json = groovy.json.JsonOutput.toJson([
+            "version"    : version,
+            "fingerprint": getGitSha(),
+            "profile"    : getBuildConfig(),
+    ])
+    final mainResourcesDir = new File(project.projectDir, "src/main/resources")
+    if (!mainResourcesDir.exists()) {
+        mainResourcesDir.mkdirs()
+    }
+    new File(mainResourcesDir, "build_${rootProject.name}-${project.name}.json").write(json)
+
+    // Overrides version before JAR packaging
+    project.version = version
+    println("Project version has been overriden to ${project.version}")
+}
+
+jar.dependsOn bootJar

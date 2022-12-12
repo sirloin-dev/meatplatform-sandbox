@@ -1,0 +1,49 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: test-meatplatform-sandbox-server
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  sql:
+    init:
+      mode: ALWAYS
+      schema-locations: classpath:/sql/schema/*.sql
+      # data-locations: classpath:/sql/data/*.sql
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:53306/sandboxapp_server?serverTimezone=UTC&useUnicode=true&character_set_server=utf8mb4;
+    username: sandbox
+    password: sandbox
+
+logging:
+  level:
+    ROOT: INFO
+    net.meatplatform: TRACE
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.springframework.jdbc.core.StatementCreatorUtils: TRACE
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+sandboxapp:
+  client:
+    minVersion: "1.0.0"
+    defaultWebUrl: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+    updateUri:
+      android: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      ios: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      web: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      windows: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      linux: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+      macos: "https://github.dev/sirloin-dev/meatplatform-sandbox"
