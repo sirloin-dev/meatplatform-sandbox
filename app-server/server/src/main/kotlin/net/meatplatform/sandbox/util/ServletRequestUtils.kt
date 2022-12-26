@@ -7,6 +7,7 @@ package net.meatplatform.sandbox.util
 import com.sirloin.jvmlib.text.isNullOrUnicodeBlank
 import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 
 fun HttpServletRequest.toHttpStatus(): HttpStatus {
@@ -58,6 +59,6 @@ fun HttpServletRequest.extractIpStr(): String {
     return remoteAddr
 }
 
-fun HttpServletRequest.userAgent(): String = getHeader("User-Agent") ?: ""
+fun HttpServletRequest.userAgent(): String = getHeader(HttpHeaders.USER_AGENT) ?: ""
 
 private fun String.isUnknown() = "unknown".equals(this, true)

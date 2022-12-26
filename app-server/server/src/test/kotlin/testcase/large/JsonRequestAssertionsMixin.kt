@@ -6,6 +6,7 @@ package testcase.large
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import io.restassured.http.Headers
 import io.restassured.response.Response
 import io.restassured.response.ResponseBody
 import io.restassured.response.ValidatableResponse
@@ -33,30 +34,35 @@ interface JsonRequestAssertionsMixin {
     fun <T : Any> Response.expect2xx(
         responseType: KClass<T>,
         httpStatus: HttpStatus = HttpStatus.OK,
-    ): T {
-        val parsed = parseResponse(this.then().assertThat().statusCode(`is`(httpStatus.value())))
+    ): Pair<T, Headers> {
+        val ongoingResponse = this.then().assertThat().statusCode(`is`(httpStatus.value()))
+        val parsed = parseResponse(ongoingResponse)
 
         if (parsed.type !== ResponseEnvelopeV1.Type.OK) {
             parsed.printAsError()
             throw AssertionError("OK 응답이 아닙니다. 테스트 케이스를 다시 확인하세요.")
         }
 
-        return defaultObjMapper.convertValue(parsed.body, responseType.java)
+        return defaultObjMapper.convertValue(parsed.body, responseType.java) to ongoingResponse.extract().headers()
     }
 
-    fun Response.expect4xx(httpStatus: HttpStatus = HttpStatus.BAD_REQUEST): ErrorResponseV1.Body {
-        val parsed = parseResponse(this.then().assertThat().statusCode(`is`(httpStatus.value())))
+    fun Response.expect4xx(
+        httpStatus: HttpStatus = HttpStatus.BAD_REQUEST
+    ): Pair<ErrorResponseV1.Body, Headers> {
+        val ongoingResponse = this.then().assertThat().statusCode(`is`(httpStatus.value()))
+        val parsed = parseResponse(ongoingResponse)
 
         if (parsed.type !== ResponseEnvelopeV1.Type.ERROR) {
             parsed.printAsError()
             throw AssertionError("ERROR 응답이 아닙니다. 테스트 케이스를 다시 확인하세요.")
         }
 
-        return defaultObjMapper.convertValue(parsed.body, ErrorResponseV1.Body::class.java)
+        return defaultObjMapper.convertValue(parsed.body, ErrorResponseV1.Body::class.java) to
+                ongoingResponse.extract().headers()
     }
 
-    fun ErrorResponseV1.Body.withExceptionCode(expectedCode: ErrorCodeBook) {
-        val actual = ErrorCodeBook.from(this.code)
+    fun Pair<ErrorResponseV1.Body, Headers>.withExceptionCode(expectedCode: ErrorCodeBook) {
+        val actual = ErrorCodeBook.from(first.code)
 
         if (actual != expectedCode) {
             throw AssertionError("기대한 실패 코드: $expectedCode, 실제 실패 코드: $actual")

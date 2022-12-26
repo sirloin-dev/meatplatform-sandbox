@@ -46,22 +46,23 @@ internal data class UserImpl(
     override val id: UUID,
     override val nickname: String,
     override val profileImageUrl: String?,
-    override val authentications: List<ProviderAuthenticationImpl>,
+    override val authentications: List<ProviderAuthentication>,
     val timestampHolder: TimestampHolderImpl
 ) : User, TimestampHolder by timestampHolder {
     companion object {
-        fun from(src: SimpleUser) = with(src) {
-            if (this is SimpleUserImpl) {
+        fun from(src: User): UserImpl = with(src) {
+            if (this is UserImpl) {
                 this
             } else {
-                SimpleUserImpl(
+                UserImpl(
                     id = id,
+                    nickname = nickname,
+                    profileImageUrl = profileImageUrl,
+                    authentications = authentications,
                     timestampHolder = TimestampHolderImpl(
                         createdAt = createdAt,
                         updatedAt = updatedAt
-                    ),
-                    nickname = nickname,
-                    profileImageUrl = profileImageUrl
+                    )
                 )
             }
         }
