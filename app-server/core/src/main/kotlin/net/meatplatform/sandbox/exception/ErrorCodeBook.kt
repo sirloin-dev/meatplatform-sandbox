@@ -34,6 +34,9 @@ enum class ErrorCodeBook(
     USER_ALREADY_REGISTERED(
         code = "E-00000020", "지원하지 않는 클라이언트 버전. 클라이언트는 이 오류를 수신한 경우, 강제 업데이트 단계로 이행해야 합니다."
     ),
+    STARTUP_FAILED(
+        code = "E-99999998", "알 수 없는 이유로 서버를 실행할 수 없을 때 발생합니다. 클라이언트가 이 오류를 보는 상황은 없어야 합니다."
+    ),
     UNHANDLED_EXCEPTION(
         code = "E-99999999", "서버에서 오류 처리를 잘못한 경우 발생합니다."
     );

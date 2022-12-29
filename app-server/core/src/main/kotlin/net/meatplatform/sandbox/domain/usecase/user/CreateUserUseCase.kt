@@ -6,7 +6,6 @@ package net.meatplatform.sandbox.domain.usecase.user
 
 import net.meatplatform.sandbox.annotation.UseCase
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthenticationImpl
 import net.meatplatform.sandbox.domain.model.user.User
 import net.meatplatform.sandbox.domain.model.user.UserImpl
 import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
@@ -14,7 +13,6 @@ import net.meatplatform.sandbox.domain.repository.user.UserRepository
 import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
 import net.meatplatform.sandbox.util.PasswordEncoderMixin
 import java.net.Inet4Address
-import java.net.InetAddress
 
 /**
  * @since 2022-02-14
@@ -82,7 +80,7 @@ internal class CreateUserUseCaseImpl(
                     // TO-DO-20221225: IPv6 케이스는 대응하지 않음
                     ProviderAuthentication.create(
                         type = ProviderAuthentication.Type.IP_ADDRESS,
-                        providerId = Inet4Address.getByName(ipAddressStr).toString()
+                        providerId = ipAddressStr
                     )
                 )
             })

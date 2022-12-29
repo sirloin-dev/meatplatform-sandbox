@@ -59,6 +59,16 @@ management:
         exclude: shutdown
 
 sandboxapp:
+  authentication:
+    rsaCert:
+      cacheCapacity: ${SANDBOXAPP_SERVER_RSA_KEY_CACHE_SIZE:100}
+      keySize: ${SANDBOXAPP_SERVER_RSA_KEY_SIZE:2048}
+      keyActiveSeconds: ${SANDBOXAPP_SERVER_RSA_KEY_ACTIVE_SECONDS:86400}
+    token:
+      issuer: "net.meatplatform.sandbox"
+      accessTokenLifeSeconds: ${SANDBOXAPP_SERVER_ACCESS_TOKEN_LIFE_SECONDS:7200}
+      refreshTokenLifeSeconds: ${SANDBOXAPP_SERVER_REFRESH_TOKEN_LIFE_SECONDS:15552000}
+
   client:
     minVersion: "1.0.0"
     defaultWebUrl: "https://github.dev/sirloin-dev/meatplatform-sandbox"

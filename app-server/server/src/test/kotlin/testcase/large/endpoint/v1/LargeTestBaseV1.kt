@@ -5,11 +5,7 @@
 package testcase.large.endpoint.v1
 
 import io.restassured.specification.RequestSpecification
-import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
 import org.springframework.http.HttpHeaders
-import org.springframework.restdocs.payload.FieldDescriptor
-import org.springframework.restdocs.snippet.IgnorableDescriptor
-import test.domain.repository.auth.SpyProviderAuthRepository
 import testcase.large.JsonRequestAssertionsMixin
 import testcase.large.WebMvcRestAssuredLargeTestBase
 import java.net.URI

@@ -42,7 +42,7 @@ class CreateUserUseCaseSpec {
         `when`(providerAuths.verifyProviderAuth(any(), any())).thenAnswer {
             ProviderAuthentication.random(type = it.arguments[0] as ProviderAuthentication.Type)
         }
-        `when`(users.save(any())).thenAnswer { it.arguments[0] }
+        `when`(users.create(any())).thenAnswer { it.arguments[0] }
     }
 
     @DisplayName("Email 과 비밀번호를 이용해 이용자를 생성할 수 있다.")

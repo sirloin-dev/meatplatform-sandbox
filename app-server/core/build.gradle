@@ -9,5 +9,10 @@ jar {
 }
 
 dependencies {
+    // SLF4J: Logging
     implementation "org.slf4j:slf4j-api:$version_slf4j"
+
+    // Bouncy Castle: Additional security measures
+    api "org.bouncycastle:bcprov-jdk15on:$version_bouncycastle"
+    api "org.bouncycastle:bcpkix-jdk15on:$version_bouncycastle"
 }

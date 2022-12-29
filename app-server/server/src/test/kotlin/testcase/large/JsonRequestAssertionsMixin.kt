@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.restassured.http.Headers
 import io.restassured.response.Response
-import io.restassured.response.ResponseBody
 import io.restassured.response.ValidatableResponse
 import net.meatplatform.sandbox.endpoint.v1.ErrorResponseV1
 import net.meatplatform.sandbox.endpoint.v1.ResponseEnvelopeV1

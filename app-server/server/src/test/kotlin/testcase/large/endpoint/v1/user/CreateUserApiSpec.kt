@@ -4,8 +4,6 @@
  */
 package testcase.large.endpoint.v1.user
 
-import io.kotest.matchers.shouldNot
-import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotBeBlank
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
@@ -15,7 +13,6 @@ import net.meatplatform.sandbox.endpoint.v1.auth.common.AuthenticationTypeDto
 import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
 import net.meatplatform.sandbox.endpoint.v1.user.create.CreateUserRequest
 import net.meatplatform.sandbox.exception.ErrorCodeBook
-import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.BeforeEach

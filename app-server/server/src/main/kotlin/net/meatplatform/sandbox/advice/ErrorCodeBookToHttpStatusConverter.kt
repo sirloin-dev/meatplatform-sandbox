@@ -17,5 +17,6 @@ fun ErrorCodeBook.toHttpStatus(): HttpStatus = when(this) {
     ErrorCodeBook.MALFORMED_INPUT -> HttpStatus.BAD_REQUEST
     ErrorCodeBook.UNSUPPORTED_CLIENT_VERSION -> HttpStatus.UPGRADE_REQUIRED
     ErrorCodeBook.USER_ALREADY_REGISTERED -> HttpStatus.CONFLICT
+    ErrorCodeBook.STARTUP_FAILED -> HttpStatus.SERVICE_UNAVAILABLE
     ErrorCodeBook.UNHANDLED_EXCEPTION -> HttpStatus.INTERNAL_SERVER_ERROR
 }

@@ -4,6 +4,7 @@
  */
 package net.meatplatform.sandbox.endpoint.v1.user.create
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.meatplatform.sandbox.domain.usecase.auth.CreateAccessTokenUseCase
@@ -13,11 +14,9 @@ import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.
 import net.meatplatform.sandbox.endpoint.v1.user.CreateUserController
 import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
 import net.meatplatform.sandbox.exception.external.IllegalHttpMessageException
+import net.meatplatform.sandbox.util.JwtTokenBakerMixin
 import net.meatplatform.sandbox.util.extractIpStr
 import org.springframework.web.bind.annotation.RestController
-import java.net.Inet4Address
-import java.net.InetAddress
-import java.net.http.HttpRequest
 
 /**
  * @since 2022-02-14
@@ -25,8 +24,9 @@ import java.net.http.HttpRequest
 @RestController
 internal class CreateUserControllerImpl(
     private val userBusiness: CreateUserUseCase,
-    private val tokenBusiness: CreateAccessTokenUseCase
-) : CreateUserController {
+    private val tokenBusiness: CreateAccessTokenUseCase,
+    private val objectMapper: ObjectMapper
+) : CreateUserController, JwtTokenBakerMixin {
     override fun create(
         req: CreateUserRequest,
         httpRequest: HttpServletRequest,
@@ -42,8 +42,8 @@ internal class CreateUserControllerImpl(
         // endregion
 
         with(httpResponse) {
-            setHeader(HEADER_AUTHORIZATION, accessToken)
-            setHeader(HEADER_X_AUTHORIZATION_RESPONSE, refreshToken)
+            setHeader(HEADER_AUTHORIZATION, accessToken.toJwtTokenBy(objectMapper))
+            setHeader(HEADER_X_AUTHORIZATION_RESPONSE, refreshToken.toJwtTokenBy(objectMapper))
         }
 
         return SimpleUserResponse.from(createdUser)

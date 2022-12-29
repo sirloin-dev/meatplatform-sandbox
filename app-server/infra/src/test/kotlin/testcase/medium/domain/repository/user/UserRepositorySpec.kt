@@ -18,8 +18,8 @@ import java.util.*
 /**
  * @since 2022-02-14
  */
-@ContextConfiguration(classes = [UserRepositoryImplSpec::class])
-class UserRepositoryImplSpec : MediumTestBase() {
+@ContextConfiguration(classes = [UserRepositorySpec::class])
+class UserRepositorySpec : MediumTestBase() {
     @Autowired
     private lateinit var sut: UserRepository
 
