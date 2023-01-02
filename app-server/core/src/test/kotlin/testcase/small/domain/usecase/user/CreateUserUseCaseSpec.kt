@@ -5,6 +5,7 @@
 package testcase.small.domain.usecase.user
 
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.model.user.User
 import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
 import net.meatplatform.sandbox.domain.repository.user.UserRepository
 import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
@@ -21,12 +22,12 @@ import test.com.sirloin.annotation.SmallTest
 import test.domain.usecase.auth.random
 import test.domain.usecase.user.CreateUserUseCaseMessageImpl
 import test.domain.usecase.user.expectCreatedUser
+import testcase.small.SmallTestBase
 
 /**
  * @since 2022-02-14
  */
-@SmallTest
-class CreateUserUseCaseSpec {
+class CreateUserUseCaseSpec: SmallTestBase() {
     private lateinit var providerAuths: ProviderAuthRepository
     private lateinit var users: UserRepository
     private lateinit var sut: CreateUserUseCase
@@ -35,7 +36,7 @@ class CreateUserUseCaseSpec {
     fun setup() {
         providerAuths = mock()
         users = mock()
-        sut = CreateUserUseCaseImpl(providerAuths, users)
+        sut = CreateUserUseCase.newInstance(providerAuths, users)
 
         // 수정필요
         `when`(providerAuths.verifyProviderAuth(any(), any())).thenAnswer {
@@ -51,7 +52,7 @@ class CreateUserUseCaseSpec {
         val message = CreateUserUseCaseMessageImpl.random()
 
         // then:
-        val result = sut.createUser(message)
+        val result = createUser(message)
 
         // expect:
         expectCreatedUser(result, isReflecting = message)
@@ -64,7 +65,7 @@ class CreateUserUseCaseSpec {
         val message = CreateUserUseCaseMessageImpl.random()
 
         // and:
-        sut.createUser(message)
+        createUser(message)
 
         // when:
         `when`(providerAuths.findByIdentity(any(), any())).thenReturn(
@@ -73,7 +74,14 @@ class CreateUserUseCaseSpec {
 
         // then:
         assertThrows<UserWithProviderIdentityAlreadyExist> {
-            sut.createUser(message)
+            createUser(message)
         }
+    }
+
+    private fun createUser(
+        message: CreateUserUseCase.Message,
+        ipAddressStr: String = "localhost"
+    ): User {
+        return sut.createUser(message, ipAddressStr)
     }
 }

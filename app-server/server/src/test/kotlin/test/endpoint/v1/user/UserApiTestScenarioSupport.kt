@@ -13,11 +13,14 @@ import testcase.large.endpoint.v1.LargeTestBaseV1
 
 fun LargeTestBaseV1.createUserApi(
     request: CreateUserRequest = CreateUserRequest.random()
-): SimpleUserResponse =
-    jsonRequest()
+): SimpleUserResponse {
+    val (response, _) = jsonRequest()
         .body(request)
         .post(ApiPathsV1.USER)
         .expect2xx(SimpleUserResponse::class)
+
+    return response
+}
 
 fun LargeTestBaseV1.createRandomUser(
     request: CreateUserRequest = CreateUserRequest.random()

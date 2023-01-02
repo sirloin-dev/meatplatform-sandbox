@@ -32,6 +32,11 @@ interface ProviderAuthentication {
 
     enum class Type(override val code: String) : SerializableEnum<String> {
         /**
+         * IP 주소 인증: Access Token 발급시에만 활용.
+         */
+        IP_ADDRESS("ip"),
+
+        /**
          * 사용자가 직접 입력한 Email + 비밀번호 인증.
          */
         EMAIL_AND_PASSWORD("e"),

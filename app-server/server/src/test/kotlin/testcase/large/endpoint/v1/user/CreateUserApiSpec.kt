@@ -4,12 +4,17 @@
  */
 package testcase.large.endpoint.v1.user
 
+import io.kotest.matchers.string.shouldNotBeBlank
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
+import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.HEADER_AUTHORIZATION
+import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.HEADER_X_AUTHORIZATION_RESPONSE
 import net.meatplatform.sandbox.endpoint.v1.auth.common.AuthenticationTypeDto
+import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
 import net.meatplatform.sandbox.endpoint.v1.user.create.CreateUserRequest
 import net.meatplatform.sandbox.exception.ErrorCodeBook
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -79,5 +84,35 @@ class CreateUserApiSpec : LargeTestBaseV1() {
             .post(ApiPathsV1.USER)
             .expect4xx(HttpStatus.CONFLICT)
             .withExceptionCode(ErrorCodeBook.USER_ALREADY_REGISTERED)
+    }
+
+    @DisplayName("이용자를 생성하면 응답 헤더의 Authorization 에 Access Token 과 Refresh Token 이 내려온다.")
+    @Test
+    fun authorizationHeaderRetrieved() {
+        // given:
+        val request = CreateUserRequest.random(authType = AuthenticationTypeDto.GOOGLE)
+
+        // when:
+        with(spyProviderAuthRepository) {
+            val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)
+            setIdentity(mockProviderAuth.type, mockProviderAuth.providerId) { _, _ -> null }
+        }
+
+        // then:
+        val (_, headers) = jsonRequest()
+            .body(request)
+            .post(ApiPathsV1.USER)
+            .expect2xx(SimpleUserResponse::class)
+
+        // and:
+        val (accessToken, refreshToken) = with(headers) {
+            get(HEADER_AUTHORIZATION)?.value to get(HEADER_X_AUTHORIZATION_RESPONSE)?.value
+        }
+
+        // expect:
+        assertAll(
+            { accessToken.shouldNotBeBlank() },
+            { refreshToken.shouldNotBeBlank() }
+        )
     }
 }

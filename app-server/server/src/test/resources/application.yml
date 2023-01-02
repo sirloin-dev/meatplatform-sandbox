@@ -37,6 +37,16 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 sandboxapp:
+  authentication:
+    rsaCert:
+      cacheCapacity: 100
+      keySize: 2048
+      keyActiveSeconds: 86400
+    token:
+      issuer: "net.meatplatform.sandbox"
+      accessTokenLifeSeconds: 7200
+      refreshTokenLifeSeconds: 15552000
+
   client:
     minVersion: "1.0.0"
     defaultWebUrl: "https://github.dev/sirloin-dev/meatplatform-sandbox"

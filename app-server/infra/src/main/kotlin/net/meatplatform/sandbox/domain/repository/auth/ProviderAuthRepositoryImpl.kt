@@ -19,6 +19,10 @@ internal class ProviderAuthRepositoryImpl : ProviderAuthRepository {
         type: ProviderAuthentication.Type,
         providerAuthToken: String
     ): ProviderAuthentication = when (type) {
+        IP_ADDRESS -> {
+            TODO("IP_ADDRESS: Not yet implemented")
+        }
+
         GOOGLE -> {
             TODO("GOOGLE: Not yet implemented")
         }

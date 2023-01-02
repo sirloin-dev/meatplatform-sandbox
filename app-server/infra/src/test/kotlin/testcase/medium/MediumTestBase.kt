@@ -5,14 +5,12 @@
 package testcase.medium
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ContextConfiguration
 import test.com.sirloin.annotation.MediumTest
-import testcase.medium.domain.repository.user.UserRepositoryImplSpec
 
 /**
  * Repository 관련 로직을 테스트할 때, 번거로운 환경설정을 상속으로 해결할 수 있도록 하는 Template Class

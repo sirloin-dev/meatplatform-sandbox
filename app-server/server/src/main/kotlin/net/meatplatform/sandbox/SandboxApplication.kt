@@ -5,9 +5,11 @@
 package net.meatplatform.sandbox
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.ComponentScan
+import java.security.Security
 
 /**
  * @since 2022-02-14
@@ -27,6 +29,10 @@ fun main(args: Array<String>) {
     ]
 )
 class SandboxApplication {
+    init {
+        Security.addProvider(BouncyCastleProvider())
+    }
+
     fun start(args: Array<String>, configurationNames: Array<String>) {
         // 한번만 호출하니까, Performance 경고를 무시합니다.
         @Suppress("SpreadOperator")

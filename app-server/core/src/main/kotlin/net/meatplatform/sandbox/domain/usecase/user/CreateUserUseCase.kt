@@ -7,16 +7,18 @@ package net.meatplatform.sandbox.domain.usecase.user
 import net.meatplatform.sandbox.annotation.UseCase
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.model.user.User
+import net.meatplatform.sandbox.domain.model.user.UserImpl
 import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
 import net.meatplatform.sandbox.domain.repository.user.UserRepository
 import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
 import net.meatplatform.sandbox.util.PasswordEncoderMixin
+import java.net.Inet4Address
 
 /**
  * @since 2022-02-14
  */
 interface CreateUserUseCase {
-    fun createUser(message: Message): User
+    fun createUser(message: Message, ipAddressStr: String): User
 
     interface Message {
         val authenticationType: ProviderAuthentication.Type
@@ -43,7 +45,7 @@ internal class CreateUserUseCaseImpl(
     private val providerAuths: ProviderAuthRepository,
     private val users: UserRepository
 ) : CreateUserUseCase, PasswordEncoderMixin {
-    override fun createUser(message: CreateUserUseCase.Message): User {
+    override fun createUser(message: CreateUserUseCase.Message, ipAddressStr: String): User {
         val newUser = message.run {
             val encodedPassword = password?.let { encodeToPassword(it) }
 
@@ -72,6 +74,16 @@ internal class CreateUserUseCaseImpl(
             throw UserWithProviderIdentityAlreadyExist(auth.type, auth.providerId)
         }
 
-        return users.create(newUser)
+        return UserImpl.from(users.save(newUser)).let {
+            it.copy(authentications = it.authentications.toMutableList().apply {
+                add(
+                    // TO-DO-20221225: IPv6 케이스는 대응하지 않음
+                    ProviderAuthentication.create(
+                        type = ProviderAuthentication.Type.IP_ADDRESS,
+                        providerId = ipAddressStr
+                    )
+                )
+            })
+        }
     }
 }

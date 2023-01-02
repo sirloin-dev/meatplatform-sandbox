@@ -24,6 +24,8 @@ buildscript {
 
         // Third party libs
         version_slf4j = "2.0.5"
+        version_bouncycastle = "1.70"
+        version_nimbus_jose = "9.25.6"
 
         // Testing & Code quality
         version_junit5 = "5.9.0"

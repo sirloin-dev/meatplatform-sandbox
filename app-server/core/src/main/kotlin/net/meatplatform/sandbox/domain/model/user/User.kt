@@ -4,6 +4,7 @@
  */
 package net.meatplatform.sandbox.domain.model.user
 
+import com.sirloin.jvmlib.util.EMPTY_UUID
 import net.meatplatform.sandbox.audit.TimestampHolder
 import net.meatplatform.sandbox.audit.TimestampHolderImpl
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
@@ -19,7 +20,7 @@ interface User : SimpleUser {
 
     companion object {
         fun create(
-            id: UUID = UUID.randomUUID(),
+            id: UUID = EMPTY_UUID,
             nickname: String,
             profileImageUrl: String? = null,
             authentications: Iterable<ProviderAuthentication>,
@@ -46,22 +47,23 @@ internal data class UserImpl(
     override val id: UUID,
     override val nickname: String,
     override val profileImageUrl: String?,
-    override val authentications: List<ProviderAuthenticationImpl>,
+    override val authentications: List<ProviderAuthentication>,
     val timestampHolder: TimestampHolderImpl
 ) : User, TimestampHolder by timestampHolder {
     companion object {
-        fun from(src: SimpleUser) = with(src) {
-            if (this is SimpleUserImpl) {
+        fun from(src: User): UserImpl = with(src) {
+            if (this is UserImpl) {
                 this
             } else {
-                SimpleUserImpl(
+                UserImpl(
                     id = id,
+                    nickname = nickname,
+                    profileImageUrl = profileImageUrl,
+                    authentications = authentications,
                     timestampHolder = TimestampHolderImpl(
                         createdAt = createdAt,
                         updatedAt = updatedAt
-                    ),
-                    nickname = nickname,
-                    profileImageUrl = profileImageUrl
+                    )
                 )
             }
         }

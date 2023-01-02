@@ -6,7 +6,6 @@ package net.meatplatform.sandbox.endpoint.v1
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
-import net.meatplatform.sandbox.exception.ErrorCodeBook
 
 /**
  * @since 2022-02-14

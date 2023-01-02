@@ -36,10 +36,10 @@ import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.doc
 import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.snippet.IgnorableDescriptor
 import org.springframework.restdocs.snippet.Snippet
+import org.yaml.snakeyaml.Yaml
 import test.TestContainerMariaDBConfig
 import test.com.sirloin.annotation.LargeTest
 import java.util.concurrent.atomic.AtomicInteger
-import org.yaml.snakeyaml.Yaml
 
 /**
  * API 를 테스트할 때, 번거로운 환경설정을 상속으로 해결할 수 있도록 하는 Template Class
