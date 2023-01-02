@@ -13,9 +13,5 @@ import java.util.*
 interface UserRepository {
     fun findById(id: UUID): User?
 
-    /** 인자로 전달받은 User 를 무조건 Repository 내에 생성: INSERT operation. */
-    fun create(user: User): User
-
-    /** 인자로 전달받은 User 를 저장 또는 수정: UPSERT operation. */
     fun save(user: User): User
 }

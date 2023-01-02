@@ -74,7 +74,7 @@ internal class CreateUserUseCaseImpl(
             throw UserWithProviderIdentityAlreadyExist(auth.type, auth.providerId)
         }
 
-        return UserImpl.from(users.create(newUser)).let {
+        return UserImpl.from(users.save(newUser)).let {
             it.copy(authentications = it.authentications.toMutableList().apply {
                 add(
                     // TO-DO-20221225: IPv6 케이스는 대응하지 않음

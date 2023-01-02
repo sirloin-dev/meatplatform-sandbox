@@ -19,8 +19,6 @@ interface RsaCertificateRepository {
 
     fun issueRandom(issuedAt: Instant = Instant.now().truncateToSeconds()): RsaCertificate
 
-    fun create(certificate: RsaCertificate): RsaCertificate
-
     fun save(certificate: RsaCertificate): RsaCertificate
 
     companion object {

@@ -4,6 +4,7 @@
  */
 package net.meatplatform.sandbox.domain.model.auth
 
+import com.sirloin.jvmlib.util.EMPTY_UUID
 import net.meatplatform.sandbox.audit.indentifiable.UUIDIdentifiable
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -93,7 +94,7 @@ interface RsaCertificate : UUIDIdentifiable {
         const val DEFAULT_ALGORITHM = "RSA"
 
         fun create(
-            id: UUID = UUID.randomUUID(),
+            id: UUID = EMPTY_UUID,
             isEnabled: Boolean = true,
             keySize: Int,
             publicKey: RSAPublicKey,

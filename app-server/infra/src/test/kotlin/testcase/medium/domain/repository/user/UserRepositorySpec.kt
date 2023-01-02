@@ -40,7 +40,7 @@ class UserRepositorySpec : MediumTestBase() {
         val user = User.random()
 
         // when:
-        val savedUser = sut.create(user)
+        val savedUser = sut.save(user)
 
         // then:
         val foundUser = sut.findById(savedUser.id)

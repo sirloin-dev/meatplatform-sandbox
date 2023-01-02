@@ -64,10 +64,8 @@ internal class CreateAccessTokenUseCaseImpl(
         /*
          * TO-DO-20221225: Token 을 별도 공간에 저장하지 않는다. 따라서 한번 발행한 Token 을 누군가가 도청할 경우,
          * 자연 만료 시간 전까지 이를 막을 방법이 없다.
-         *
-         * TO-DO-20221226: 로직 User 내로 이동.
          */
-        val certificate = rsaCerts.findCurrentlyActive() ?: rsaCerts.create(rsaCerts.issueRandom())
+        val certificate = rsaCerts.findCurrentlyActive() ?: rsaCerts.save(rsaCerts.issueRandom())
         val accessToken = AccessTokenPayload.create(
             certificate = certificate,
             issuer = issuerName,

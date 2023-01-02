@@ -15,10 +15,16 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.time.Instant
 import java.util.*
+import com.github.javafaker.Faker
 
 fun ProviderAuthentication.Companion.random(
     type: ProviderAuthentication.Type = randomEnum(ProviderAuthentication.Type::class),
-    providerId: String = randomAlphanumeric(24, 24),
+    providerId: String = when (type) {
+        ProviderAuthentication.Type.IP_ADDRESS -> "localhost"
+        ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> Faker().internet().emailAddress()
+        ProviderAuthentication.Type.GOOGLE,
+        ProviderAuthentication.Type.APPLE -> randomAlphanumeric(24, 24)
+    },
     password: String? = if (type == ProviderAuthentication.Type.EMAIL_AND_PASSWORD) {
         randomAlphanumeric(16, 16)
     } else {

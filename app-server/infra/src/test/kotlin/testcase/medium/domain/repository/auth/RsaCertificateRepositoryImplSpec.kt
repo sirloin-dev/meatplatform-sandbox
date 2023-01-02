@@ -62,7 +62,7 @@ class RsaCertificateRepositoryImplSpec : MediumTestBase() {
         val cert = RsaCertificate.random()
 
         // when:
-        val savedCert = sut.create(cert)
+        val savedCert = sut.save(cert)
 
         // then:
         val foundCert = sut.findById(cert.id)
@@ -75,7 +75,7 @@ class RsaCertificateRepositoryImplSpec : MediumTestBase() {
     @Test
     fun disabledCertificateNotBeFound() {
         // given:
-        val disabledCert = sut.create(RsaCertificate.random(isEnabled = false))
+        val disabledCert = sut.save(RsaCertificate.random(isEnabled = false))
 
         // then:
         val foundCert = sut.findById(disabledCert.id)
@@ -91,7 +91,7 @@ class RsaCertificateRepositoryImplSpec : MediumTestBase() {
         @Test
         fun noCertIsFoundIfMostRecentActiveLatestIsAlreadyPast() {
             // given:
-            sut.create(RsaCertificate.random(isEnabled = false))
+            sut.save(RsaCertificate.random(isEnabled = false))
 
             // then:
             val foundCert = sut.findCurrentlyActive()

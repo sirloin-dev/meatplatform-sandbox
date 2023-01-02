@@ -24,12 +24,13 @@ internal class UserRepositoryImpl(
     override fun findById(id: UUID): User? = userReader.findById(id)?.let { User.fromEntity(it) }
 
     @Transactional
-    override fun create(user: User): User = saveInternal(user.toEntity())
-
-    @Transactional
     override fun save(user: User): User {
         val userEntity = user.run {
-            userReader.findById(id)?.importValues(user) ?: toEntity()
+            if (isIdentifiable) {
+                userReader.findById(id)?.importValues(this) ?: toEntity()
+            } else {
+                toEntity()
+            }
         }
 
         return saveInternal(userEntity)

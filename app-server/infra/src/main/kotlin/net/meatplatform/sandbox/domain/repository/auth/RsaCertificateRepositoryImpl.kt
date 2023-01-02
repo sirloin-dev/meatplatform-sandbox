@@ -78,12 +78,13 @@ internal class RsaCertificateRepositoryImpl(
     }
 
     @Transactional
-    override fun create(certificate: RsaCertificate): RsaCertificate = saveInternal(certificate.toEntity())
-
-    @Transactional
     override fun save(certificate: RsaCertificate): RsaCertificate {
         val certEntity = certificate.run {
-            certReader.findById(id)?.importValues(certificate) ?: toEntity()
+            if (isIdentifiable) {
+                certReader.findById(id)?.importValues(certificate) ?: toEntity()
+            } else {
+                toEntity()
+            }
         }
 
         return saveInternal(certEntity)

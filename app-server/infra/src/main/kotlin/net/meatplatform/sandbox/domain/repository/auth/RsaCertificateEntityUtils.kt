@@ -18,9 +18,14 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 
 internal fun RsaCertificateEntity.importValues(newValue: RsaCertificate): RsaCertificateEntity {
-    this.id = newValue.id
+    this.id = if (newValue.isIdentifiable) {
+        newValue.id
+    } else {
+        UUID.randomUUID()
+    }
     this.isEnabled = newValue.isEnabled
     this.keySize = newValue.keySize
     this.pemPublicKey = newValue.publicKey.toPemFormat()
