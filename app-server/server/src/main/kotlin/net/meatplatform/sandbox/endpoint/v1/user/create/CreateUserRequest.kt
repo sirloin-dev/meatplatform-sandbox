@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.sirloin.jvmlib.text.isNullOrUnicodeBlank
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotNull
 import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.model.user.SimpleUser
 import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
 import net.meatplatform.sandbox.endpoint.v1.auth.common.AuthenticationTypeDto
 import net.meatplatform.sandbox.util.validation.UnicodeCharsLength
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotNull
 
 /**
  * @since 2022-02-14

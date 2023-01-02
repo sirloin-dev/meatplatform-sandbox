@@ -5,11 +5,11 @@
 package net.meatplatform.sandbox.util.validation
 
 import com.sirloin.jvmlib.text.unicodeGraphemeCount
-import javax.validation.Constraint
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
-import javax.validation.Payload
-import javax.validation.constraints.Size
+import jakarta.validation.Constraint
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
+import jakarta.validation.Payload
+import jakarta.validation.constraints.Size
 import kotlin.reflect.KClass
 
 /**

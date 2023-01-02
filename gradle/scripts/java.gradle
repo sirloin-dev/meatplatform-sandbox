@@ -25,10 +25,10 @@ artifacts {
 
 dependencies {
     // JSR 303: Bean validation
-    implementation "javax.validation:validation-api:$version_javax_validation"
+    implementation "jakarta.validation:jakarta.validation-api:$version_jakarta_validation"
 
     // JSR 330: Dependency Injection for Java
-    implementation "javax.inject:javax.inject:$version_javax_inject"
+    implementation "jakarta.inject:jakarta.inject-api:$version_jakarta_inject"
 
     // JSR 305: Annotations for Software Defect Detection
     implementation "com.google.code.findbugs:jsr305:$version_jsr305"
