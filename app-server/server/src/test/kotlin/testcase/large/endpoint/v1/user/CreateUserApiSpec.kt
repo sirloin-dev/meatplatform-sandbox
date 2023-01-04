@@ -5,10 +5,10 @@
 package testcase.large.endpoint.v1.user
 
 import io.kotest.matchers.string.shouldNotBeBlank
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
-import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.HEADER_AUTHORIZATION
-import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.HEADER_X_AUTHORIZATION_RESPONSE
+import net.meatplatform.sandbox.endpoint.v1.auth.LoginController.Companion.HEADER_AUTHORIZATION
+import net.meatplatform.sandbox.endpoint.v1.auth.LoginController.Companion.HEADER_X_AUTHORIZATION_RESPONSE
 import net.meatplatform.sandbox.endpoint.v1.auth.common.AuthenticationTypeDto
 import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
 import net.meatplatform.sandbox.endpoint.v1.user.create.CreateUserRequest
@@ -46,12 +46,13 @@ class CreateUserApiSpec : LargeTestBaseV1() {
     @Test
     fun userIsCreated() {
         // given:
-        val request = CreateUserRequest.random(authType = AuthenticationTypeDto.GOOGLE)
+        val authType = AuthenticationTypeDto.GOOGLE
+        val request = CreateUserRequest.random(authType = authType)
 
         // when:
         with(spyProviderAuthRepository) {
-            val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)
-            setIdentity(mockProviderAuth.type, mockProviderAuth.providerId) { _, _ -> null }
+            val mockProviderAuth = setProviderAuthVerified(authType.domainValue, request.providerAuthToken)
+            setFindByProviderAuthIdentity(authType.domainValue, mockProviderAuth.providerId) { _, _ -> null }
         }
 
         // then:
@@ -65,16 +66,20 @@ class CreateUserApiSpec : LargeTestBaseV1() {
     @Test
     fun userWithSameSocialIdentityNotCreated() {
         // given:
-        val request = CreateUserRequest.random(authType = AuthenticationTypeDto.GOOGLE)
+        val authType = AuthenticationTypeDto.GOOGLE
+        val request = CreateUserRequest.random(authType = authType)
 
         // when:
-        val (_, _) = createRandomUser(request)
+        val (_, providerAuth) = createRandomUser(request)
 
         // then:
         with(spyProviderAuthRepository) {
-            val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)
-            setIdentity(mockProviderAuth.type, mockProviderAuth.providerId) { type, providerId ->
-                ProviderAuthentication.create(type, providerId)
+            val expectedProviderAuth = ProviderAuthentication.create(authType.domainValue, providerAuth.providerId)
+            setProviderAuthVerified(authType.domainValue, request.providerAuthToken)  { _, _ ->
+                expectedProviderAuth
+            }
+            setFindByProviderAuthIdentity(authType.domainValue, providerAuth.providerId) { _, _ ->
+                expectedProviderAuth
             }
         }
 
@@ -90,12 +95,13 @@ class CreateUserApiSpec : LargeTestBaseV1() {
     @Test
     fun authorizationHeaderRetrieved() {
         // given:
-        val request = CreateUserRequest.random(authType = AuthenticationTypeDto.GOOGLE)
+        val authType = AuthenticationTypeDto.GOOGLE
+        val request = CreateUserRequest.random(authType = authType)
 
         // when:
         with(spyProviderAuthRepository) {
-            val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)
-            setIdentity(mockProviderAuth.type, mockProviderAuth.providerId) { _, _ -> null }
+            val mockProviderAuth = setProviderAuthVerified(authType.domainValue, request.providerAuthToken)
+            setFindByProviderAuthIdentity(authType.domainValue, mockProviderAuth.providerId) { _, _ -> null }
         }
 
         // then:

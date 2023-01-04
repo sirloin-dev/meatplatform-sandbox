@@ -4,7 +4,7 @@
  */
 package net.meatplatform.sandbox.exception.external.user
 
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.exception.ErrorCodeBook
 import net.meatplatform.sandbox.exception.external.MalformedInputException
 

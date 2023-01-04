@@ -4,9 +4,9 @@
  */
 package net.meatplatform.sandbox.appconfig.domain.usecase
 
-import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
-import net.meatplatform.sandbox.domain.repository.user.UserRepository
-import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
+import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.user.repository.UserRepository
+import net.meatplatform.sandbox.domain.user.usecase.CreateUserUseCase
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

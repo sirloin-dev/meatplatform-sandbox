@@ -4,7 +4,7 @@
  */
 package testcase.large
 
-import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
 import org.junit.jupiter.api.Order
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.TestConfiguration

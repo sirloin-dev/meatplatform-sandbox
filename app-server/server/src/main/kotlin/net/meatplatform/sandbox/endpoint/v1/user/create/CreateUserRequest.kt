@@ -11,10 +11,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.sirloin.jvmlib.text.isNullOrUnicodeBlank
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotNull
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.user.SimpleUser
-import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.user.SimpleUser
+import net.meatplatform.sandbox.domain.user.usecase.CreateUserUseCase
 import net.meatplatform.sandbox.endpoint.v1.auth.common.AuthenticationTypeDto
+import net.meatplatform.sandbox.endpoint.v1.auth.login.LoginRequest
 import net.meatplatform.sandbox.util.validation.UnicodeCharsLength
 
 /**
@@ -69,11 +70,10 @@ data class CreateUserRequest(
         private const val NICKNAME_MIN = SimpleUser.NICKNAME_SIZE_MIN
         private const val NICKNAME_MAX = SimpleUser.NICKNAME_SIZE_MAX
 
-        const val DESC_AUTH_TYPE = "이용자 생성 및 확인에 활용할 인증 정보."
-        const val DESC_EMAIL = "authType 이 Email 인 경우, null 이 아니어야 합니다."
-        const val DESC_PASSWORD = "authType 이 Email 인 경우, null 이 아니어야 합니다. 클라이언트는 이용자의 평문 암호를" +
-                "적절히 hash 한 값을 전달해 주세요. "
-        const val DESC_PROVIDER_AUTH_TOKEN = "authType 이 Google 또는 Apple 인 경우 null 이 아니어야 합니다."
+        const val DESC_AUTH_TYPE = LoginRequest.DESC_AUTH_TYPE
+        const val DESC_EMAIL = LoginRequest.DESC_EMAIL
+        const val DESC_PASSWORD = LoginRequest.DESC_PASSWORD
+        const val DESC_PROVIDER_AUTH_TOKEN = LoginRequest.DESC_PROVIDER_AUTH_TOKEN
         const val DESC_NICKNAME = "$NICKNAME_MIN 자 이상, $NICKNAME_MAX 자 이하의 이용자 닉네임."
         const val DESC_PROFILE_IMAGE_URL = "Profile image URL"
     }

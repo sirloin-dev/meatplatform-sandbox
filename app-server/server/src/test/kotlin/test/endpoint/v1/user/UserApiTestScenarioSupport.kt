@@ -4,6 +4,7 @@
  */
 package test.endpoint.v1.user
 
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
 import net.meatplatform.sandbox.endpoint.v1.auth.common.AuthenticationTypeDto
 import net.meatplatform.sandbox.endpoint.v1.auth.common.ProviderAuthenticationResponse
@@ -29,7 +30,11 @@ fun LargeTestBaseV1.createRandomUser(
 
     val providerAuthentication = with(spyProviderAuthRepository) {
         val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)
-        setIdentity(mockProviderAuth.type, mockProviderAuth.providerId) { _, _ -> null }
+        if (mockProviderAuth.type == ProviderAuthentication.Type.EMAIL_AND_PASSWORD) {
+            setFindByEmailAuthIdentity(mockProviderAuth.providerId, mockProviderAuth.password ?: "") { _, _ -> null }
+        } else {
+            setFindByProviderAuthIdentity(mockProviderAuth.type, mockProviderAuth.providerId) { _, _ -> null }
+        }
 
         return@with ProviderAuthenticationResponse(
             AuthenticationTypeDto.from(mockProviderAuth.type),

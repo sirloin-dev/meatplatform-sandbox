@@ -15,4 +15,9 @@ dependencies {
     // Bouncy Castle: Additional security measures
     api "org.bouncycastle:bcprov-jdk15on:$version_bouncycastle"
     api "org.bouncycastle:bcpkix-jdk15on:$version_bouncycastle"
+
+    // Jackson: Spring WebMVC 의 Request/Response DTO 처리 라이브러리
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:$version_jackson"
+    testImplementation "com.fasterxml.jackson.module:jackson-module-kotlin:$version_jackson"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$version_jackson"
 }

@@ -6,7 +6,7 @@ package net.meatplatform.sandbox.jpa.converter
 
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 
 /**
  * @since 2022-12-09

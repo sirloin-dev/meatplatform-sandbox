@@ -4,13 +4,13 @@
  */
 package test.util
 
-import com.github.javafaker.Faker
 import com.sirloin.jvmlib.util.SemanticVersion
+import test.SharedTestObjects.faker
 import test.com.sirloin.util.text.randomFillChars
 import kotlin.random.Random
 
 fun randomAlphanumeric(min: Int = 1, max: Int = 32): String =
-    Faker().letterify(randomFillChars('?', min, max))
+    faker.letterify(randomFillChars('?', min, max))
 
 fun randomSemanticVersion(
     major: Int = Random.nextInt(100),

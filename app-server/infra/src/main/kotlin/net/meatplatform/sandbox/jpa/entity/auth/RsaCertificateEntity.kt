@@ -46,14 +46,6 @@ internal class RsaCertificateEntity {
     @Column(name = "active_until")
     var activeUntil: Instant = Instant.MIN
 
-    override fun equals(other: Any?): Boolean = if (other is UserEntity) {
-        id == other.id
-    } else {
-        false
-    }
-
-    override fun hashCode(): Int = Objects.hash(id)
-
     override fun toString(): String = """${RsaCertificateEntity::class.simpleName}(
         |  seq=$seq,
         |  id=$id,

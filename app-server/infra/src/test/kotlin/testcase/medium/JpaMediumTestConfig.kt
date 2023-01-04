@@ -4,7 +4,7 @@
  */
 package testcase.medium
 
-import net.meatplatform.sandbox.domain.model.auth.RsaCertificate
+import net.meatplatform.sandbox.domain.auth.RsaCertificate
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean

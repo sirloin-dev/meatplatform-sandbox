@@ -6,11 +6,11 @@ package testcase.small.domain.usecase.auth
 
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.auth.RsaCertificate
-import net.meatplatform.sandbox.domain.model.user.User
-import net.meatplatform.sandbox.domain.repository.auth.RsaCertificateRepository
-import net.meatplatform.sandbox.domain.usecase.auth.CreateAccessTokenUseCase
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.RsaCertificate
+import net.meatplatform.sandbox.domain.user.User
+import net.meatplatform.sandbox.domain.auth.repository.RsaCertificateRepository
+import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase
 import net.meatplatform.sandbox.exception.internal.IpAuthenticationNotFoundException
 import org.junit.jupiter.api.*
 import org.mockito.Mockito.`when`

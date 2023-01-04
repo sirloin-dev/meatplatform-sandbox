@@ -5,7 +5,7 @@
 package net.meatplatform.sandbox.jpa.entity.auth
 
 import jakarta.persistence.*
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.jpa.converter.ProviderAuthenticationTypeConverter
 import net.meatplatform.sandbox.jpa.entity.user.UserEntity
 import java.util.*
@@ -43,14 +43,6 @@ internal class UserAuthenticationEntity {
     @Version
     @Column(name = "version")
     var version: Long = 1L
-
-    override fun equals(other: Any?): Boolean = if (other is UserAuthenticationEntity) {
-        seq == other.seq
-    } else {
-        false
-    }
-
-    override fun hashCode(): Int = Objects.hash(seq)
 
     override fun toString(): String = """${UserAuthenticationEntity::class.simpleName}(
         |  seq=$seq,

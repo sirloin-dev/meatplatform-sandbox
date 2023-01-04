@@ -44,14 +44,6 @@ internal class UserEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], mappedBy = "user")
     var linkedAuthenticationEntities: MutableSet<UserAuthenticationEntity> = mutableSetOf()
 
-    override fun equals(other: Any?): Boolean = if (other is UserEntity) {
-        id == other.id
-    } else {
-        false
-    }
-
-    override fun hashCode(): Int = Objects.hash(id)
-
     override fun toString(): String = """${UserEntity::class.simpleName}(
         |  seq=$seq,
         |  id=$id,

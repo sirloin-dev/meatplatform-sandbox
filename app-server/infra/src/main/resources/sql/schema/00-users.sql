@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `users_authentications`
     `version`     BIGINT      NOT NULL,
 
     CONSTRAINT `uk_users_authentications_seq` UNIQUE (`seq`),
+    CONSTRAINT `uk_users_authentications_identity` UNIQUE (`type`, `provider_id`),
     CONSTRAINT `fk_authentications_to_users_by_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
         ON DELETE CASCADE
 );

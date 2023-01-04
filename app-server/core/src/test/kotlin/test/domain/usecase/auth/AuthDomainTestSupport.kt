@@ -4,9 +4,10 @@
  */
 package test.domain.usecase.auth
 
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.auth.RsaCertificate
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.RsaCertificate
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import test.SharedTestObjects.faker
 import test.com.sirloin.util.random.randomEnum
 import test.util.randomAlphanumeric
 import java.security.KeyPairGenerator
@@ -15,13 +16,12 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.time.Instant
 import java.util.*
-import com.github.javafaker.Faker
 
 fun ProviderAuthentication.Companion.random(
     type: ProviderAuthentication.Type = randomEnum(ProviderAuthentication.Type::class),
     providerId: String = when (type) {
         ProviderAuthentication.Type.IP_ADDRESS -> "localhost"
-        ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> Faker().internet().emailAddress()
+        ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> faker.internet().emailAddress()
         ProviderAuthentication.Type.GOOGLE,
         ProviderAuthentication.Type.APPLE -> randomAlphanumeric(24, 24)
     },

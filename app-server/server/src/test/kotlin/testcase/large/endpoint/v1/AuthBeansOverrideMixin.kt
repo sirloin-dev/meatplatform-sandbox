@@ -4,7 +4,7 @@
  */
 package testcase.large.endpoint.v1
 
-import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
 import org.springframework.context.ApplicationContext
 import test.domain.repository.auth.SpyProviderAuthRepository
 

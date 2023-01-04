@@ -4,8 +4,11 @@
  */
 package net.meatplatform.sandbox.appconfig.domain.usecase
 
-import net.meatplatform.sandbox.domain.repository.auth.RsaCertificateRepository
-import net.meatplatform.sandbox.domain.usecase.auth.CreateAccessTokenUseCase
+import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.auth.repository.RsaCertificateRepository
+import net.meatplatform.sandbox.domain.user.repository.UserRepository
+import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase
+import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase
 import net.meatplatform.sandbox.exception.internal.IllegalConfigValueException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -22,8 +25,7 @@ internal class AuthBeansConfig {
         @Value("\${$CONFIG_AUTH_TOKEN_ISSUER}") issuerName: String,
         @Value("\${$CONFIG_AUTH_TOKEN_ACCESS_TOKEN_LIFE_SECONDS}") accessTokenLifeSeconds: String,
         @Value("\${$CONFIG_AUTH_TOKEN_REFRESH_TOKEN_LIFE_SECONDS}") refreshTokenLifeSeconds: String,
-        @Qualifier(RsaCertificateRepository.NAME)
-        rsaCertificateRepository: RsaCertificateRepository
+        @Qualifier(RsaCertificateRepository.NAME) rsaCertificateRepository: RsaCertificateRepository
     ) = CreateAccessTokenUseCase.newInstance(
         issuerName = issuerName,
         accessTokenLifeSeconds = accessTokenLifeSeconds.toLongOrNull() ?: throw IllegalConfigValueException(
@@ -37,6 +39,15 @@ internal class AuthBeansConfig {
             Long::class
         ),
         rsaCertificateRepository = rsaCertificateRepository
+    )
+
+    @Bean
+    fun loginUseCase(
+        @Qualifier(ProviderAuthRepository.NAME) providerAuthRepository: ProviderAuthRepository,
+        userRepository: UserRepository
+    ) = LoginUseCase.newInstance(
+        providerAuthRepository = providerAuthRepository,
+        userRepository = userRepository
     )
 
     companion object {

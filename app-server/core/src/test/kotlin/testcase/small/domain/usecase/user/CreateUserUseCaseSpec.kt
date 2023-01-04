@@ -4,12 +4,11 @@
  */
 package testcase.small.domain.usecase.user
 
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.user.User
-import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
-import net.meatplatform.sandbox.domain.repository.user.UserRepository
-import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
-import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCaseImpl
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.user.User
+import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.user.repository.UserRepository
+import net.meatplatform.sandbox.domain.user.usecase.CreateUserUseCase
 import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -18,16 +17,16 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import test.com.sirloin.annotation.SmallTest
 import test.domain.usecase.auth.random
 import test.domain.usecase.user.CreateUserUseCaseMessageImpl
 import test.domain.usecase.user.expectCreatedUser
+import test.domain.usecase.user.random
 import testcase.small.SmallTestBase
 
 /**
  * @since 2022-02-14
  */
-class CreateUserUseCaseSpec: SmallTestBase() {
+class CreateUserUseCaseSpec : SmallTestBase() {
     private lateinit var providerAuths: ProviderAuthRepository
     private lateinit var users: UserRepository
     private lateinit var sut: CreateUserUseCase
@@ -68,9 +67,7 @@ class CreateUserUseCaseSpec: SmallTestBase() {
         createUser(message)
 
         // when:
-        `when`(providerAuths.findByIdentity(any(), any())).thenReturn(
-            ProviderAuthentication.random(type = message.authenticationType, password = message.password)
-        )
+        `when`(users.findByProviderAuth(any())).thenReturn(User.random())
 
         // then:
         assertThrows<UserWithProviderIdentityAlreadyExist> {

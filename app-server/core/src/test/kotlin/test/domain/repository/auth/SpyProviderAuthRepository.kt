@@ -4,8 +4,8 @@
  */
 package test.domain.repository.auth
 
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.repository.auth.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
 import test.domain.usecase.auth.random
 
 /**
@@ -15,7 +15,8 @@ class SpyProviderAuthRepository(
     private val delegate: ProviderAuthRepository
 ) : ProviderAuthRepository {
     private val mockProviderAuthVerified = HashMap<Pair<ProviderAuthentication.Type, String>, ProviderAuthentication>()
-    private val mockIdentity = HashMap<Pair<ProviderAuthentication.Type, String>, ProviderAuthentication?>()
+    private val mockEmailAuthIdentity = HashMap<Pair<String, String>, ProviderAuthentication?>()
+    private val mockProviderAuthIdentity = HashMap<Pair<ProviderAuthentication.Type, String>, ProviderAuthentication?>()
 
     fun setProviderAuthVerified(
         type: ProviderAuthentication.Type?,
@@ -36,28 +37,38 @@ class SpyProviderAuthRepository(
         return result
     }
 
-    fun setIdentity(
-        type: ProviderAuthentication.Type?,
-        providerId: String?,
+    fun setFindByEmailAuthIdentity(
+        email: String,
+        password: String,
+        onFindByEmailAuthIdentity: ((String, String) -> ProviderAuthentication?)? = null
+    ): ProviderAuthentication? {
+        val key = mockVerifyEmailAuthKey(email, password)
+        val result = onFindByEmailAuthIdentity?.invoke(email, password)
+
+        mockEmailAuthIdentity[key] = result
+        return result
+    }
+
+    fun setFindByProviderAuthIdentity(
+        type: ProviderAuthentication.Type,
+        providerId: String,
         onFindByIdentity: ((ProviderAuthentication.Type, String) -> ProviderAuthentication?)? = null
     ): ProviderAuthentication? {
-        if (type == null || providerId == null) {
-            throw IllegalArgumentException(
-                "ProviderAuthentication, ProviderId 는 모두 null 이 아니어야 합니다" +
-                        "(ProviderAuthentication=$type, ProviderId=$providerId)."
-            )
+        if (type == ProviderAuthentication.Type.EMAIL_AND_PASSWORD) {
+            throw IllegalArgumentException("mock email 인증은 ${::setFindByEmailAuthIdentity} 를 호출해야 합니다.")
         }
 
         val key = mockVerifyProviderAuthKey(type, providerId)
         val result = onFindByIdentity?.invoke(type, providerId)
 
-        mockIdentity[key] = result
+        mockProviderAuthIdentity[key] = result
         return result
     }
 
     fun clearMocks() {
         mockProviderAuthVerified.clear()
-        mockIdentity.clear()
+        mockEmailAuthIdentity.clear()
+        mockProviderAuthIdentity.clear()
     }
 
     override fun verifyProviderAuth(
@@ -73,15 +84,30 @@ class SpyProviderAuthRepository(
         }
     }
 
-    override fun findByIdentity(type: ProviderAuthentication.Type, providerId: String): ProviderAuthentication? {
-        val mockEntryKey = mockVerifyProviderAuthKey(type, providerId)
+    override fun findByEmailAuthIdentity(email: String, password: String): ProviderAuthentication? {
+        val mockEntryKey = mockVerifyEmailAuthKey(email, password)
 
-        return if (mockIdentity.containsKey(mockEntryKey)) {
-            mockIdentity[mockEntryKey]
+        return if (mockEmailAuthIdentity.containsKey(mockEntryKey)) {
+            mockEmailAuthIdentity[mockEntryKey]
         } else {
-            delegate.verifyProviderAuth(type, providerId)
+            delegate.findByEmailAuthIdentity(email, password)
         }
     }
+
+    override fun findByProviderAuthIdentity(
+        type: ProviderAuthentication.Type,
+        providerId: String
+    ): ProviderAuthentication? {
+        val mockEntryKey = mockVerifyProviderAuthKey(type, providerId)
+
+        return if (mockProviderAuthIdentity.containsKey(mockEntryKey)) {
+            mockProviderAuthIdentity[mockEntryKey]
+        } else {
+            delegate.findByProviderAuthIdentity(type, providerId)
+        }
+    }
+
+    private fun mockVerifyEmailAuthKey(email: String, password: String): Pair<String, String> = email to password
 
     private fun mockVerifyProviderAuthKey(
         type: ProviderAuthentication.Type,

@@ -6,7 +6,7 @@ package net.meatplatform.sandbox.appconfig
 
 import net.meatplatform.sandbox.SandboxApplication
 import net.meatplatform.sandbox.SandboxApplication.Companion.BuildConfig
-import net.meatplatform.sandbox.domain.model.auth.RsaCertificate
+import net.meatplatform.sandbox.domain.auth.RsaCertificate
 import net.meatplatform.sandbox.exception.internal.IllegalConfigValueException
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Value

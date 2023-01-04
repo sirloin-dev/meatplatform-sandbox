@@ -7,7 +7,7 @@ package net.meatplatform.sandbox.endpoint.v1.user.common
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import net.meatplatform.sandbox.domain.model.user.SimpleUser
+import net.meatplatform.sandbox.domain.user.SimpleUser
 import net.meatplatform.sandbox.endpoint.v1.ResponseV1
 import java.time.Instant
 import java.util.*

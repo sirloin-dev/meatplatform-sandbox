@@ -5,9 +5,9 @@
 package test.domain.usecase.user
 
 import io.kotest.matchers.shouldBe
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.user.User
-import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.user.User
+import net.meatplatform.sandbox.domain.user.usecase.CreateUserUseCase
 import org.junit.jupiter.api.Assertions.assertAll
 
 fun expectCreatedUser(actual: User, isReflecting: CreateUserUseCase.Message) {

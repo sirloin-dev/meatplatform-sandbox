@@ -6,7 +6,7 @@ package net.meatplatform.sandbox.endpoint.v1.auth.common
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.util.EnumDeserializer
 import net.meatplatform.sandbox.util.SerializableEnum
 

@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
-import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.HEADER_AUTHORIZATION
-import net.meatplatform.sandbox.endpoint.v1.auth.IssueTokenController.Companion.HEADER_X_AUTHORIZATION_RESPONSE
+import net.meatplatform.sandbox.endpoint.v1.auth.LoginController.Companion.HEADER_AUTHORIZATION
+import net.meatplatform.sandbox.endpoint.v1.auth.LoginController.Companion.HEADER_X_AUTHORIZATION_RESPONSE
 import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
 import net.meatplatform.sandbox.endpoint.v1.user.create.CreateUserRequest
 import org.springframework.http.MediaType

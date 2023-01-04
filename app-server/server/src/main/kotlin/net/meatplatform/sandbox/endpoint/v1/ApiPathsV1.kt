@@ -10,5 +10,8 @@ package net.meatplatform.sandbox.endpoint.v1
 object ApiPathsV1 {
     const val V1 = "/v1"
 
+    const val AUTH = "$V1/auth"
+    const val AUTH_LOGIN = "$AUTH/login"
+
     const val USER = "$V1/user"
 }

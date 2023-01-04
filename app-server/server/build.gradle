@@ -60,3 +60,10 @@ processResources.doFirst {
 }
 
 jar.dependsOn bootJar
+
+allOpen {
+    annotation("org.springframework.stereotype.Controller")
+    annotation("org.springframework.web.bind.annotation.ControllerAdvice")
+    annotation("org.springframework.web.bind.annotation.RestController")
+    annotation("org.springframework.web.bind.annotation.RestControllerAdvice")
+}

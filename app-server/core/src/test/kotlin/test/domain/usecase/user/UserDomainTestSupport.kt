@@ -4,10 +4,10 @@
  */
 package test.domain.usecase.user
 
-import com.github.javafaker.Faker
-import net.meatplatform.sandbox.domain.model.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.model.user.User
-import net.meatplatform.sandbox.domain.usecase.user.CreateUserUseCase
+import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.domain.user.User
+import net.meatplatform.sandbox.domain.user.usecase.CreateUserUseCase
+import test.SharedTestObjects.faker
 import test.com.sirloin.util.random.randomEnum
 import test.domain.usecase.auth.random
 import test.util.randomAlphanumeric
@@ -29,7 +29,7 @@ data class CreateUserUseCaseMessageImpl(
         fun random(
             authenticationType: ProviderAuthentication.Type = randomEnum(ProviderAuthentication.Type::class),
             email: String? = when (authenticationType) {
-                ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> Faker().internet().emailAddress()
+                ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> faker.internet().emailAddress()
                 else -> null
             },
             password: String? = when (authenticationType) {
@@ -40,9 +40,9 @@ data class CreateUserUseCaseMessageImpl(
                 ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> null
                 else -> randomAlphanumeric(min = 128, max = 128)
             },
-            nickname: String = Faker().funnyName().name(),
-            profileImageUrl: String? = if (Faker().random().nextBoolean()) {
-                Faker().internet().image()
+            nickname: String = faker.funnyName().name(),
+            profileImageUrl: String? = if (faker.random().nextBoolean()) {
+                faker.internet().image()
             } else {
                 null
             }
@@ -59,13 +59,13 @@ data class CreateUserUseCaseMessageImpl(
 
 fun User.Companion.random(
     id: UUID = UUID.randomUUID(),
-    nickname: String = Faker().funnyName().name(),
-    profileImageUrl: String? = if (Faker().random().nextBoolean()) {
-        Faker().internet().image()
+    nickname: String = faker.funnyName().name(),
+    profileImageUrl: String? = if (faker.random().nextBoolean()) {
+        faker.internet().image()
     } else {
         null
     },
-    authentications: Iterable<ProviderAuthentication> = setOf(ProviderAuthentication.random()),
+    authentications: Collection<ProviderAuthentication> = setOf(ProviderAuthentication.random()),
     createdAt: Instant? = null,
     updatedAt: Instant? = null
 ): User {
