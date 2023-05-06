@@ -5,8 +5,8 @@
 package testcase.small.domain.usecase.user
 
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.user.repository.UserRepository
 import net.meatplatform.sandbox.domain.user.usecase.CreateUserUseCase
 import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
@@ -17,10 +17,12 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import test.SharedTestObjects
+import test.com.sirloin.util.random.randomEnum
 import test.domain.usecase.auth.random
-import test.domain.usecase.user.CreateUserUseCaseMessageImpl
 import test.domain.usecase.user.expectCreatedUser
 import test.domain.usecase.user.random
+import test.util.randomAlphanumeric
 import testcase.small.SmallTestBase
 
 /**
@@ -80,5 +82,48 @@ class CreateUserUseCaseSpec : SmallTestBase() {
         ipAddressStr: String = "localhost"
     ): User {
         return sut.createUser(message, ipAddressStr)
+    }
+}
+
+/**
+ * @since 2022-02-14
+ */
+data class CreateUserUseCaseMessageImpl(
+    override val authenticationType: ProviderAuthentication.Type,
+    override val email: String?,
+    override val password: String?,
+    override val providerAuthToken: String?,
+    override val nickname: String,
+    override val profileImageUrl: String?
+) : CreateUserUseCase.Message {
+    companion object {
+        fun random(
+            authenticationType: ProviderAuthentication.Type = randomEnum(ProviderAuthentication.Type::class),
+            email: String? = when (authenticationType) {
+                ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> SharedTestObjects.faker.internet().emailAddress()
+                else -> null
+            },
+            password: String? = when (authenticationType) {
+                ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> randomAlphanumeric(16, 16)
+                else -> null
+            },
+            providerAuthToken: String? = when (authenticationType) {
+                ProviderAuthentication.Type.EMAIL_AND_PASSWORD -> null
+                else -> randomAlphanumeric(min = 128, max = 128)
+            },
+            nickname: String = SharedTestObjects.faker.funnyName().name(),
+            profileImageUrl: String? = if (SharedTestObjects.faker.random().nextBoolean()) {
+                SharedTestObjects.faker.internet().image()
+            } else {
+                null
+            }
+        ): CreateUserUseCase.Message = CreateUserUseCaseMessageImpl(
+            authenticationType = authenticationType,
+            email = email,
+            password = password,
+            providerAuthToken = providerAuthToken,
+            nickname = nickname,
+            profileImageUrl = profileImageUrl
+        )
     }
 }

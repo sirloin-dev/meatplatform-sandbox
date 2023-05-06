@@ -34,6 +34,9 @@ internal class MessageTemplateProviderImpl : MessageTemplateProvider {
             ErrorCodeBook.UNSUPPORTED_CLIENT_VERSION -> "최소 버전 {0} 이상의 클라이언트를 이용하세요."
             ErrorCodeBook.USER_ALREADY_REGISTERED -> "''{0}'' 은 이미 등록한 인증 정보입니다."
             ErrorCodeBook.USER_BY_PROVIDER_AUTH_NOT_FOUND -> "인증정보 ''{0}'' (''{1}'') 에 해당하는 이용자가 없습니다."
+            ErrorCodeBook.EXTERNAL_PROVIDER_AUTH_VERIFICATION_FAILED -> "제 3자 로그인(''{0}'')에 실패했습니다."
+            ErrorCodeBook.SUSPICIOUS_IP_ADDRESS_DETECTED -> "수상한 접속 시도입니다. " +
+                    "마지막 접속기록: {0}, {1}({2}), 현재 접속기록: {3}, {4}({5})"
             ErrorCodeBook.STARTUP_FAILED -> "서비스를 제공할 수 없습니다."
             ErrorCodeBook.UNHANDLED_EXCEPTION -> "알 수 없는 오류가 발생했습니다."
         }

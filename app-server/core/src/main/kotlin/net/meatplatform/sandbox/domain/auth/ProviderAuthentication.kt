@@ -31,30 +31,33 @@ interface ProviderAuthentication {
      */
     val name: String
 
-    enum class Type(override val code: String) : SerializableEnum<String> {
+    enum class Type(
+        override val code: String,
+        val isThirdPartyAuth: Boolean
+    ) : SerializableEnum<String> {
         /**
          * IP 주소 인증: Access Token 발급시에만 활용.
          */
-        IP_ADDRESS("ip"),
+        IP_ADDRESS("ip", false),
 
         /**
          * 사용자가 직접 입력한 Email + 비밀번호 인증.
          */
-        EMAIL_AND_PASSWORD("e"),
+        EMAIL_AND_PASSWORD("e", false),
 
         /**
          * Google 인증.
          *
          * https://developers.google.com/identity/sign-in/web/backend-auth?hl=en#calling-the-tokeninfo-endpoint
          */
-        GOOGLE("g"),
+        GOOGLE("g", true),
 
         /**
          * Apple 인증. Google/Facebook 인증과 달리, 이용자의 Token 을 직접 validate 해야 한다. (OAuth 2.0)
          *
          * https://developer.apple.com/documentation/sign_in_with_apple/fetch_apple_s_public_key_for_verifying_token_signature
          */
-        APPLE("a");
+        APPLE("a", true);
 
         companion object : EnumDeserializer<String, Type> {
             override fun from(code: String?): Type? = values().firstOrNull { it.code == code }

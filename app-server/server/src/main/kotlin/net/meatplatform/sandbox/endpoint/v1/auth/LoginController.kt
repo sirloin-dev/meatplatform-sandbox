@@ -7,6 +7,7 @@ package net.meatplatform.sandbox.endpoint.v1.auth
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import net.meatplatform.sandbox.endpoint.common.response.SimpleValueResponse
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
 import net.meatplatform.sandbox.endpoint.v1.auth.login.LoginRequest
 import org.springframework.http.HttpHeaders
@@ -31,7 +32,7 @@ interface LoginController {
         @Valid @RequestBody req: LoginRequest,
         httpRequest: HttpServletRequest,
         httpResponse: HttpServletResponse
-    ): Unit?
+    ): SimpleValueResponse<Boolean>
 
     companion object {
         const val HEADER_AUTHORIZATION = HttpHeaders.AUTHORIZATION

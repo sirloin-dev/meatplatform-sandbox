@@ -13,15 +13,12 @@ import java.time.Instant
 /**
  * @since 2022-12-27
  */
-interface AccessTokenPayload : AuthenticationTokenPayload, IpAddressValidatorMixin {
+interface AccessTokenPayload : AuthenticationTokenPayload {
     val ipAddress: InetAddress
 
     override fun serialise(): Map<String, Any> = HashMap(super.serialise()).apply {
         put(SERIALISE_KEY_IPV4, ipAddress.toString())
     }
-
-    fun isAcceptableIpAddress(currentIpAddress: InetAddress): Boolean =
-        ipAddress.isAcceptableIpAddress(currentIpAddress)
 
     companion object {
         const val SERIALISE_KEY_IPV4 = "ipv4"

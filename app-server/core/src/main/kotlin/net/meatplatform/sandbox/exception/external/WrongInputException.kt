@@ -12,7 +12,7 @@ import net.meatplatform.sandbox.exception.ErrorCodeBook
  * @since 2022-02-14
  * @see MalformedInputException
  */
-class WrongInputException constructor(
+open class WrongInputException constructor(
     private val value: Any,
     override val message: String = "'$value' is not a valid input value.",
     override val cause: Throwable? = null

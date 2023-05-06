@@ -6,13 +6,12 @@ package net.meatplatform.sandbox.domain.auth.usecase
 
 import net.meatplatform.sandbox.annotation.UseCase
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase.*
+import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.user.repository.UserRepository
+import net.meatplatform.sandbox.exception.external.auth.ProviderAuthenticationFailedException
 import net.meatplatform.sandbox.exception.external.user.UserByProviderAuthenticationNotFoundException
-import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase.Message
-import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase.EmailLoginMessage
-import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase.ThirdPartyAuthLoginMessage
 import net.meatplatform.sandbox.util.PasswordEncoderMixin
 
 /**
@@ -78,8 +77,16 @@ internal class LoginUseCaseImpl(
                 providerAuths.findByEmailAuthIdentity(email, encodeToPassword(password))
             } ?: return null
 
-            is ThirdPartyAuthLoginMessage -> message.run {
-                providerAuths.verifyProviderAuth(type, authToken)
+            is ThirdPartyAuthLoginMessage -> try {
+                message.run {
+                    providerAuths.verifyProviderAuth(type, authToken)
+                }
+            } catch (e: ProviderAuthenticationFailedException) {
+                throw UserByProviderAuthenticationNotFoundException(
+                    providerType = message.type,
+                    providerToken = message.token,
+                    cause = e
+                )
             }
 
             else -> throw UnsupportedOperationException("'${message.type}' Login is not supported.")

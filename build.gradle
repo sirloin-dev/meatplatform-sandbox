@@ -19,6 +19,7 @@ buildscript {
         version_springBootTest = "3.0.0"
 
         // Infrastructure
+        version_undertow = "2.3.0.Final"
         version_mariadb = "3.1.0"
         version_hikariCP = "5.0.1"
 
@@ -26,6 +27,7 @@ buildscript {
         version_slf4j = "2.0.5"
         version_bouncycastle = "1.70"
         version_nimbus_jose = "9.25.6"
+        version_jackson = "2.14.1"
 
         // Testing & Code quality
         version_junit5 = "5.9.0"
@@ -36,13 +38,8 @@ buildscript {
         version_javaFaker = "1.0.2"
         version_asciidoctor = "3.3.2"
         version_jacoco = "0.8.8"
-        version_h2database = "2.1.212"
-
-        // Infrastructure
-        version_servlet = "2.3.0.Final"
         version_h2database = "2.1.214"
         version_testcontainers = "1.17.3"
-        version_jackson = "2.14.1"
     }
 
     repositories {

@@ -37,6 +37,12 @@ enum class ErrorCodeBook(
     USER_BY_PROVIDER_AUTH_NOT_FOUND(
         code = "E-00000021", "클라이언트가 제공한 로그인 정보에 해당하는 이용자가 없는 경우, 로그인 실패와 함께 발생합니다."
     ),
+    EXTERNAL_PROVIDER_AUTH_VERIFICATION_FAILED(
+        code = "E-10000001", "제 3자 로그인 서비스에서 인증을 거부할 때 발생합니다."
+    ),
+    SUSPICIOUS_IP_ADDRESS_DETECTED(
+        code = "E-10000002", "IP 주소 기반의 로그인 정보가 의심스러운 경우 발생합니다."
+    ),
     STARTUP_FAILED(
         code = "E-99999998", "알 수 없는 이유로 서버를 실행할 수 없을 때 발생합니다. 클라이언트가 이 오류를 보는 상황은 없어야 합니다."
     ),

@@ -20,10 +20,6 @@ internal class ProviderAuthRepositoryImpl : ProviderAuthRepository {
         type: ProviderAuthentication.Type,
         providerAuthToken: String
     ): ProviderAuthentication = when (type) {
-        IP_ADDRESS -> {
-            TODO("IP_ADDRESS: Not yet implemented")
-        }
-
         GOOGLE -> {
             TODO("GOOGLE: Not yet implemented")
         }
@@ -32,7 +28,8 @@ internal class ProviderAuthRepositoryImpl : ProviderAuthRepository {
             TODO("APPLE: Not yet implemented")
         }
 
-        EMAIL_AND_PASSWORD -> throw UnsupportedOperationException("Cannot verify $type provider authentication.")
+        IP_ADDRESS, EMAIL_AND_PASSWORD ->
+            throw UnsupportedOperationException("Cannot verify $type provider authentication.")
     }
 
     override fun findByEmailAuthIdentity(email: String, password: String): ProviderAuthentication? {

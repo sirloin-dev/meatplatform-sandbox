@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse
 import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase
 import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase
 import net.meatplatform.sandbox.endpoint.common.JwtTokenIssuerMixin
+import net.meatplatform.sandbox.endpoint.common.response.SimpleValueResponse
 import net.meatplatform.sandbox.endpoint.v1.auth.LoginController
 import org.springframework.web.bind.annotation.RestController
 
@@ -26,11 +27,11 @@ internal class LoginControllerImpl(
         req: LoginRequest,
         httpRequest: HttpServletRequest,
         httpResponse: HttpServletResponse
-    ): Unit? {
+    ): SimpleValueResponse<Boolean> {
         userBusiness.getUserByProviderAuthentication(req.toLoginMessage()).also {
             httpResponse.issueTokenPairsOf(it)
         }
 
-        return null
+        return SimpleValueResponse(true)
     }
 }
