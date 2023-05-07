@@ -6,6 +6,7 @@ package net.meatplatform.sandbox.jpa.entity.common
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
+import net.meatplatform.sandbox.annotation.RequiresTransaction
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.Instant
@@ -26,6 +27,15 @@ class SoftDeletableEmbedded(time: Instant = Instant.now()) {
     @get:LastModifiedDate
     @get:Column(name = "updated_at")
     var updatedAt: Instant = time
+
+    @RequiresTransaction
+    fun importValues(other: SoftDeletableEmbedded): SoftDeletableEmbedded {
+        this.isDeleted = other.isDeleted
+        this.createdAt = other.createdAt
+        this.updatedAt = other.updatedAt
+
+        return this
+    }
 
     override fun equals(other: Any?): Boolean = if (other !is SoftDeletableEmbedded) {
         false

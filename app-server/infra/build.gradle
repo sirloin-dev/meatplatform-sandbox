@@ -4,6 +4,8 @@
  */
 version version_app_server
 
+apply plugin: "org.jetbrains.kotlin.plugin.jpa"
+
 apply from: "${project.rootDir}/gradle/scripts/springBootCommon.gradle"
 
 jar {
@@ -17,6 +19,14 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "com.zaxxer:HikariCP:$version_hikariCP"
     implementation "org.mariadb.jdbc:mariadb-java-client:$version_mariadb"
+
+    // Jackson: Spring WebMVC 의 Request/Response DTO 처리 라이브러리
+    implementation "com.fasterxml.jackson.core:jackson-databind:$version_jackson"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$version_jackson"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$version_jackson"
+
+    // JWT
+    implementation "com.nimbusds:nimbus-jose-jwt:$version_nimbus_jose"
 
     // Project dependencies
     implementation project(MODULE_CORE)

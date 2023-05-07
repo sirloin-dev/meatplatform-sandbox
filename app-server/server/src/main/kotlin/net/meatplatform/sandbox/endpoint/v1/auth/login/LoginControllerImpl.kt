@@ -12,6 +12,7 @@ import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase
 import net.meatplatform.sandbox.endpoint.common.JwtTokenIssuerMixin
 import net.meatplatform.sandbox.endpoint.common.response.SimpleValueResponse
 import net.meatplatform.sandbox.endpoint.v1.auth.LoginController
+import net.meatplatform.sandbox.util.extractIpStr
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -28,7 +29,7 @@ internal class LoginControllerImpl(
         httpRequest: HttpServletRequest,
         httpResponse: HttpServletResponse
     ): SimpleValueResponse<Boolean> {
-        userBusiness.getUserByProviderAuthentication(req.toLoginMessage()).also {
+        userBusiness.getUserByProviderAuthentication(req.toLoginMessage(), httpRequest.extractIpStr()).also {
             httpResponse.issueTokenPairsOf(it)
         }
 

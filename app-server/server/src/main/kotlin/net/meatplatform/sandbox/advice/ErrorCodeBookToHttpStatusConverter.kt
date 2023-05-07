@@ -16,6 +16,7 @@ fun ErrorCodeBook.toHttpStatus(): HttpStatus = when(this) {
     ErrorCodeBook.WRONG_INPUT -> HttpStatus.BAD_REQUEST
     ErrorCodeBook.MALFORMED_INPUT -> HttpStatus.BAD_REQUEST
     ErrorCodeBook.UNSUPPORTED_CLIENT_VERSION -> HttpStatus.UPGRADE_REQUIRED
+    ErrorCodeBook.EXTERNAL_SYSTEM_NOT_RESPONDING -> HttpStatus.BAD_GATEWAY
     ErrorCodeBook.USER_ALREADY_REGISTERED -> HttpStatus.CONFLICT
     ErrorCodeBook.USER_BY_PROVIDER_AUTH_NOT_FOUND -> HttpStatus.UNAUTHORIZED
     ErrorCodeBook.EXTERNAL_PROVIDER_AUTH_VERIFICATION_FAILED -> HttpStatus.UNAUTHORIZED

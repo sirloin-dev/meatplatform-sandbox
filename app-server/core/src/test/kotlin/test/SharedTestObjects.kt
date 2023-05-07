@@ -5,6 +5,9 @@
 package test
 
 import com.github.javafaker.Faker
+import test.appConfig.TestClientVersionConfigHolder
+import test.appConfig.TestOAuthConfig
+import test.util.TestToStringHelper
 
 /**
  * @since 2023-02-14
@@ -17,4 +20,10 @@ object SharedTestObjects {
      * 다만 Thread safety 여부는 확인하지 못했다.
      */
     val faker: Faker by lazy { Faker() }
+
+    val toStringHelper = TestToStringHelper()
+
+    val clientVersionConfigHolder = TestClientVersionConfigHolder()
+
+    val oAuthConfig = TestOAuthConfig()
 }

@@ -7,10 +7,11 @@ package net.meatplatform.sandbox.domain.user.usecase
 import net.meatplatform.sandbox.annotation.UseCase
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
+import net.meatplatform.sandbox.domain.common.AddIpAddressAuthenticationMixin
 import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.user.repository.UserRepository
 import net.meatplatform.sandbox.exception.external.user.UserWithProviderIdentityAlreadyExist
-import net.meatplatform.sandbox.util.PasswordEncoderMixin
+import net.meatplatform.sandbox.util.PasswordCodecMixin
 
 /**
  * @since 2022-02-14
@@ -42,10 +43,10 @@ interface CreateUserUseCase {
 internal class CreateUserUseCaseImpl(
     private val providerAuths: ProviderAuthRepository,
     private val users: UserRepository
-) : CreateUserUseCase, PasswordEncoderMixin {
+) : CreateUserUseCase, PasswordCodecMixin, AddIpAddressAuthenticationMixin {
     override fun createUser(message: CreateUserUseCase.Message, ipAddressStr: String): User {
         val newUser = message.run {
-            val encodedPassword = password?.let { encodeToPassword(it) }
+            val encodedPassword = password?.let { encodePassword(it) }
 
             return@run User.create(
                 nickname = nickname,
@@ -73,16 +74,6 @@ internal class CreateUserUseCaseImpl(
             }
         }
 
-        return users.save(newUser).run {
-            mutator().copyUser(authentications = authentications.toMutableList().apply {
-                add(
-                    // TO-DO-20221225: IPv6 케이스는 대응하지 않음
-                    ProviderAuthentication.create(
-                        type = ProviderAuthentication.Type.IP_ADDRESS,
-                        providerId = ipAddressStr
-                    )
-                )
-            })
-        }
+        return users.save(newUser).addIpAddressAuthentication(ipAddressStr)
     }
 }

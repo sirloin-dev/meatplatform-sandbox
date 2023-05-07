@@ -10,6 +10,6 @@ import com.sirloin.jvmlib.text.toHexString
 /**
  * @since 2022-12-09
  */
-interface PasswordEncoderMixin {
-    fun encodeToPassword(password: String): String = password.toSha256Bytes().toHexString()
+interface PasswordCodecMixin {
+    fun encodePassword(password: String): String = password.toSha256Bytes().toHexString()
 }

@@ -48,6 +48,36 @@ interface JsonRequestAssertionsMixin {
     fun Response.expect4xx(
         httpStatus: HttpStatus = HttpStatus.BAD_REQUEST
     ): Pair<ErrorResponseV1.Body, Headers> {
+        val code = httpStatus.value()
+        if (code < 400 || code > 499) {
+            throw AssertionError("4xx 응답이 아닙니다. Http status: $httpStatus")
+        }
+
+        return expectError(httpStatus)
+    }
+
+    fun Response.expect5xx(
+        httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+    ): Pair<ErrorResponseV1.Body, Headers> {
+        val code = httpStatus.value()
+        if (code < 500 || code > 599) {
+            throw AssertionError("5xx 응답이 아닙니다. Http status: $httpStatus")
+        }
+
+        return expectError(httpStatus)
+    }
+
+    fun Pair<ErrorResponseV1.Body, Headers>.withExceptionCode(expectedCode: ErrorCodeBook) {
+        val actual = ErrorCodeBook.from(first.code)
+
+        if (actual != expectedCode) {
+            throw AssertionError("기대한 실패 코드: $expectedCode, 실제 실패 코드: $actual")
+        }
+    }
+
+    private fun Response.expectError(
+        httpStatus: HttpStatus
+    ): Pair<ErrorResponseV1.Body, Headers> {
         val ongoingResponse = this.then().assertThat().statusCode(`is`(httpStatus.value()))
         val parsed = parseResponse(ongoingResponse)
 
@@ -58,14 +88,6 @@ interface JsonRequestAssertionsMixin {
 
         return defaultObjMapper.convertValue(parsed.body, ErrorResponseV1.Body::class.java) to
                 ongoingResponse.extract().headers()
-    }
-
-    fun Pair<ErrorResponseV1.Body, Headers>.withExceptionCode(expectedCode: ErrorCodeBook) {
-        val actual = ErrorCodeBook.from(first.code)
-
-        if (actual != expectedCode) {
-            throw AssertionError("기대한 실패 코드: $expectedCode, 실제 실패 코드: $actual")
-        }
     }
 
     private fun parseResponse(response: ValidatableResponse): ResponseEnvelopeV1<Map<String, *>> {

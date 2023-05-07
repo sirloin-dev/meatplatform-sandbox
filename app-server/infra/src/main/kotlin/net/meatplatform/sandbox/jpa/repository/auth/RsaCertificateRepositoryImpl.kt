@@ -10,8 +10,10 @@ import net.meatplatform.sandbox.annotation.InfrastructureService
 import net.meatplatform.sandbox.domain.auth.RsaCertificate
 import net.meatplatform.sandbox.domain.auth.RsaCertificate.Companion.DEFAULT_ALGORITHM
 import net.meatplatform.sandbox.domain.auth.repository.RsaCertificateRepository
+import net.meatplatform.sandbox.jpa.crosscut.deserialise.AuthenticationDeserialiseMixin
 import net.meatplatform.sandbox.jpa.dao.read.RsaCertificateEntityReadDao
 import net.meatplatform.sandbox.jpa.dao.write.RsaCertificateEntityWriteDao
+import net.meatplatform.sandbox.jpa.entity.user.UserEntity.Companion.toRsaCertificateEntity
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.transaction.annotation.Transactional
 import java.security.KeyPairGenerator
@@ -33,7 +35,7 @@ internal class RsaCertificateRepositoryImpl(
     private val policy: RsaCertificate.Policy,
     private val certReader: RsaCertificateEntityReadDao,
     private val certWriter: RsaCertificateEntityWriteDao
-) : RsaCertificateRepository {
+) : RsaCertificateRepository, AuthenticationDeserialiseMixin {
     @VisibleForTesting
     internal var lruCache = FastCollectedLruCache.create<UUID, RsaCertificate>(policy.cacheCapacity)
 
@@ -43,7 +45,7 @@ internal class RsaCertificateRepositoryImpl(
     @Transactional
     override fun findById(id: UUID): RsaCertificate? =
         synchronized(CACHE_ACCESS_LOCK) { lruCache.get(id) }
-            ?: certReader.findById(id)?.let { RsaCertificate.fromEntity(it) }?.also { cacheCertificate(it) }
+            ?: certReader.findById(id)?.toRsaCertificate()?.also { cacheCertificate(it) }
 
     @Transactional
     override fun findCurrentlyActive(): RsaCertificate? {
@@ -53,8 +55,7 @@ internal class RsaCertificateRepositoryImpl(
         return if (maybeCachedLastActive?.isActiveAt(now) == true) {
             maybeCachedLastActive
         } else {
-            certReader.findLatestActiveUntil(now)
-                ?.let { RsaCertificate.fromEntity(it) }
+            certReader.findLatestActiveUntil(now)?.toRsaCertificate()
                 ?.also {
                     cacheCertificate(it)
                     synchronized(LAST_ACTIVE_ACCESS_LOCK) { cachedLatestActive = it }
@@ -79,18 +80,16 @@ internal class RsaCertificateRepositoryImpl(
 
     @Transactional
     override fun save(certificate: RsaCertificate): RsaCertificate {
+        val newValues = certificate.toRsaCertificateEntity()
         val certEntity = certificate.run {
             if (isIdentifiable) {
-                certReader.findById(id)?.importValues(certificate) ?: toEntity()
+                certReader.findById(id)?.importValues(newValues) ?: newValues
             } else {
-                toEntity()
+                newValues
             }
         }
 
-        val savedEntity = certWriter.save(certEntity)
-        return RsaCertificate.fromEntity(savedEntity).also {
-            cacheCertificate(it)
-        }
+        return certWriter.save(certEntity).toRsaCertificate().also { cacheCertificate(it) }
     }
 
     private fun cacheCertificate(cert: RsaCertificate): RsaCertificate = synchronized(CACHE_ACCESS_LOCK) {

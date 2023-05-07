@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import test.com.sirloin.util.random.randomEnum
 import test.domain.repository.auth.SpyProviderAuthRepository
 import test.endpoint.v1.user.assertSimpleUserResponse
 import test.endpoint.v1.user.createRandomUser
@@ -51,7 +52,7 @@ class CreateUserApiSpec : LargeTestBaseV1() {
 
         // when:
         with(spyProviderAuthRepository) {
-            val mockProviderAuth = setProviderAuthVerified(authType.domainValue, request.providerAuthToken)
+            val mockProviderAuth = setProviderAuthVerified(authType.domainValue, request.providerAuthToken)!!
             setFindByProviderAuthIdentity(authType.domainValue, mockProviderAuth.providerId) { _, _ -> null }
         }
 
@@ -66,7 +67,7 @@ class CreateUserApiSpec : LargeTestBaseV1() {
     @Test
     fun userWithSameSocialIdentityNotCreated() {
         // given:
-        val authType = AuthenticationTypeDto.GOOGLE
+        val authType = randomEnum(AuthenticationTypeDto::class) { it.domainValue.isThirdPartyAuth }
         val request = CreateUserRequest.random(authType = authType)
 
         // when:
@@ -75,7 +76,7 @@ class CreateUserApiSpec : LargeTestBaseV1() {
         // then:
         with(spyProviderAuthRepository) {
             val expectedProviderAuth = ProviderAuthentication.create(authType.domainValue, providerAuth.providerId)
-            setProviderAuthVerified(authType.domainValue, request.providerAuthToken)  { _, _ ->
+            setProviderAuthVerified(authType.domainValue, request.providerAuthToken) { _, _ ->
                 expectedProviderAuth
             }
             setFindByProviderAuthIdentity(authType.domainValue, providerAuth.providerId) { _, _ ->
@@ -100,7 +101,7 @@ class CreateUserApiSpec : LargeTestBaseV1() {
 
         // when:
         with(spyProviderAuthRepository) {
-            val mockProviderAuth = setProviderAuthVerified(authType.domainValue, request.providerAuthToken)
+            val mockProviderAuth = setProviderAuthVerified(authType.domainValue, request.providerAuthToken)!!
             setFindByProviderAuthIdentity(authType.domainValue, mockProviderAuth.providerId) { _, _ -> null }
         }
 

@@ -6,43 +6,53 @@ package net.meatplatform.sandbox.jpa.entity.auth
 
 import jakarta.persistence.*
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
+import net.meatplatform.sandbox.jpa.ValueImporterJpaEntityTemplate
 import net.meatplatform.sandbox.jpa.converter.ProviderAuthenticationTypeConverter
 import net.meatplatform.sandbox.jpa.entity.user.UserEntity
-import java.util.*
 
 /**
- * Equals, Hashcode 구현에 대한 Article 은 [EvansClassification](https://martinfowler.com/bliki/EvansClassification.html) 참고.
- *
  * @since 2022-12-09
  */
 @Entity
 @Table(name = "users_authentications")
-internal class UserAuthenticationEntity {
+internal class UserAuthenticationEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
-    var seq: Long = -1L
+    val seq: Long = 0L,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    var user: UserEntity? = null
+    var ownerUserEntity: UserEntity? = null,
 
     @Convert(converter = ProviderAuthenticationTypeConverter::class)
     @Column(name = "type")
-    var type: ProviderAuthentication.Type = ProviderAuthentication.Type.EMAIL_AND_PASSWORD
+    var type: ProviderAuthentication.Type,
 
     @Column(name = "provider_id")
-    var providerId: String = ""
+    var providerId: String,
 
     @Column(name = "password", columnDefinition = "TEXT")
-    var password: String? = null
+    var password: String?,
 
     @Column(name = "name")
-    var name: String = ""
-
+    var name: String
+) : ValueImporterJpaEntityTemplate<Long, UserAuthenticationEntity>() {
     @Version
     @Column(name = "version")
-    var version: Long = 1L
+    private var version: Long = 1L
+
+    @get:Transient
+    override val id: Long
+        get() = seq
+
+    override fun importValuesInternal(newValue: UserAuthenticationEntity) {
+        this.ownerUserEntity = newValue.ownerUserEntity
+        this.type = newValue.type
+        this.providerId = newValue.providerId
+        this.password = newValue.password
+        this.name = newValue.name
+    }
 
     override fun toString(): String = """${UserAuthenticationEntity::class.simpleName}(
         |  seq=$seq,
@@ -53,4 +63,15 @@ internal class UserAuthenticationEntity {
         |  name=$name,
         |  version=$version
         |)""".trimMargin()
+
+    companion object {
+        fun create(newValue: ProviderAuthentication, owner: UserEntity?): UserAuthenticationEntity =
+            UserAuthenticationEntity(
+                ownerUserEntity = owner,
+                type = newValue.type,
+                providerId = newValue.providerId,
+                password = newValue.password,
+                name = newValue.name
+            )
+    }
 }

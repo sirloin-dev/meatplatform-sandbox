@@ -4,6 +4,8 @@
  */
 package net.meatplatform.sandbox
 
+import net.meatplatform.sandbox.appconfig.ClientVersionConfigHolder
+import net.meatplatform.sandbox.appconfig.OAuthConfig
 import net.meatplatform.sandbox.util.ToStringHelper
 
 /**
@@ -11,6 +13,10 @@ import net.meatplatform.sandbox.util.ToStringHelper
  */
 interface CoreApplication {
     fun toStringHelper(): ToStringHelper
+
+    fun clientVersionConfig(): ClientVersionConfigHolder
+
+    fun oAuthConfig(): OAuthConfig
 
     companion object {
         private var _instance: CoreApplication? = null

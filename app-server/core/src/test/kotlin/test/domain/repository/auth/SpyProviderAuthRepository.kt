@@ -7,6 +7,9 @@ package test.domain.repository.auth
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
 import test.domain.usecase.auth.random
+import test.util.randomAlphanumeric
+
+typealias OnVerifyProviderAuth = (ProviderAuthentication.Type, String) -> ProviderAuthentication
 
 /**
  * @since 2022-02-14
@@ -14,15 +17,30 @@ import test.domain.usecase.auth.random
 class SpyProviderAuthRepository(
     private val delegate: ProviderAuthRepository
 ) : ProviderAuthRepository {
-    private val mockProviderAuthVerified = HashMap<Pair<ProviderAuthentication.Type, String>, ProviderAuthentication>()
+    private val mockProviderAuthVerified = HashMap<Pair<ProviderAuthentication.Type, String>, OnVerifyProviderAuth>()
     private val mockEmailAuthIdentity = HashMap<Pair<String, String>, ProviderAuthentication?>()
     private val mockProviderAuthIdentity = HashMap<Pair<ProviderAuthentication.Type, String>, ProviderAuthentication?>()
+    private val mockProviderAuthToIdMap = HashMap<Pair<ProviderAuthentication.Type, String>, String>()
 
+    /**
+     * 제3자 인증 실패를 시뮬레이션 하기 위해 [onVerified] 가 예외를 던지도록 할 수 있습니다. 이 때는 반환값이 `null` 입니다.
+     *
+     * 항상 성공하는 [onVerified] 를 주입했거나 기본값을 쓰도록 했다면 반환결과는 절대로 `null` 이 아닙니다.
+     */
     fun setProviderAuthVerified(
         type: ProviderAuthentication.Type?,
         providerAuthToken: String?,
-        onVerified: ((ProviderAuthentication.Type, String) -> ProviderAuthentication)? = null
-    ): ProviderAuthentication {
+        onVerified: OnVerifyProviderAuth = { paType, paToken ->
+            val key = mockVerifyProviderAuthKey(paType, paToken)
+            val providerId = if (mockProviderAuthToIdMap.containsKey(key)) {
+                mockProviderAuthToIdMap[key]!!
+            } else {
+                randomAlphanumeric(24, 24).also { mockProviderAuthToIdMap[key] = it }
+            }
+
+            /* return@lambda */ ProviderAuthentication.random(type = paType, providerId = providerId)
+        }
+    ): ProviderAuthentication? {
         if (type == null || providerAuthToken == null) {
             throw IllegalArgumentException(
                 "ProviderAuthentication, ProviderAuthToken 은 모두 null 이 아니어야 합니다" +
@@ -31,9 +49,13 @@ class SpyProviderAuthRepository(
         }
 
         val key = mockVerifyProviderAuthKey(type, providerAuthToken)
-        val result = onVerified?.invoke(type, providerAuthToken) ?: ProviderAuthentication.random(type = type)
+        val result = try {
+            onVerified.invoke(type, providerAuthToken)
+        } catch (_: Throwable) {
+            null
+        }
 
-        mockProviderAuthVerified[key] = result
+        mockProviderAuthVerified[key] = onVerified
         return result
     }
 
@@ -69,6 +91,7 @@ class SpyProviderAuthRepository(
         mockProviderAuthVerified.clear()
         mockEmailAuthIdentity.clear()
         mockProviderAuthIdentity.clear()
+        mockProviderAuthToIdMap.clear()
     }
 
     override fun verifyProviderAuth(
@@ -78,19 +101,19 @@ class SpyProviderAuthRepository(
         val mockEntryKey = mockVerifyProviderAuthKey(type, providerAuthToken)
 
         return if (mockProviderAuthVerified.containsKey(mockEntryKey)) {
-            mockProviderAuthVerified[mockEntryKey]!!
+            mockProviderAuthVerified[mockEntryKey]!!.invoke(type, providerAuthToken)
         } else {
             delegate.verifyProviderAuth(type, providerAuthToken)
         }
     }
 
-    override fun findByEmailAuthIdentity(email: String, password: String): ProviderAuthentication? {
-        val mockEntryKey = mockVerifyEmailAuthKey(email, password)
+    override fun findByEmailAuthIdentity(email: String, encodedPassword: String): ProviderAuthentication? {
+        val mockEntryKey = mockVerifyEmailAuthKey(email, encodedPassword)
 
         return if (mockEmailAuthIdentity.containsKey(mockEntryKey)) {
             mockEmailAuthIdentity[mockEntryKey]
         } else {
-            delegate.findByEmailAuthIdentity(email, password)
+            delegate.findByEmailAuthIdentity(email, encodedPassword)
         }
     }
 

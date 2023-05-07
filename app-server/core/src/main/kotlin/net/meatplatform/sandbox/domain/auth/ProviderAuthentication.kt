@@ -31,6 +31,8 @@ interface ProviderAuthentication {
      */
     val name: String
 
+    fun mutator(): ProviderAuthenticationMutator = ProviderAuthenticationMutator.from(this)
+
     enum class Type(
         override val code: String,
         val isThirdPartyAuth: Boolean

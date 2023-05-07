@@ -8,6 +8,8 @@ import net.meatplatform.sandbox.annotation.InfrastructureService
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.user.repository.UserRepository
+import net.meatplatform.sandbox.jpa.crosscut.deserialise.UserDeserialiseMixin
+import net.meatplatform.sandbox.jpa.crosscut.serialise.UserSerialiseMixin
 import net.meatplatform.sandbox.jpa.dao.read.UserAuthenticationEntityReadDao
 import net.meatplatform.sandbox.jpa.dao.read.UserEntityReadDao
 import net.meatplatform.sandbox.jpa.dao.write.UserEntityWriteDao
@@ -22,9 +24,9 @@ internal class UserRepositoryImpl(
     private val userReader: UserEntityReadDao,
     private val userWriter: UserEntityWriteDao,
     private val userAuthReader: UserAuthenticationEntityReadDao
-) : UserRepository {
+) : UserRepository, UserSerialiseMixin, UserDeserialiseMixin {
     @Transactional
-    override fun findById(id: UUID): User? = userReader.findById(id)?.let { User.fromEntity(it) }
+    override fun findById(id: UUID): User? = userReader.findById(id)?.toUser()
 
     @Transactional
     override fun findByProviderAuth(providerAuth: ProviderAuthentication): User? {
@@ -39,20 +41,20 @@ internal class UserRepositoryImpl(
             }
         }
 
-        return maybeUserAuthEntity?.user?.let { User.fromEntity(it) }
+        return maybeUserAuthEntity?.ownerUserEntity?.toUser()
     }
 
     @Transactional
     override fun save(user: User): User {
+        val newValues = user.toUserEntity()
         val userEntity = user.run {
             if (isIdentifiable) {
-                userReader.findById(id)?.importValues(this) ?: toEntity()
+                userReader.findById(id)?.importValues(newValues) ?: newValues
             } else {
-                toEntity()
+                newValues
             }
         }
 
-        val savedEntity = userWriter.save(userEntity)
-        return User.fromEntity(savedEntity)
+        return userWriter.save(userEntity).toUser()
     }
 }

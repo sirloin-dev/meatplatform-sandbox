@@ -4,6 +4,7 @@
  */
 package net.meatplatform.sandbox.appconfig
 
+import net.meatplatform.sandbox.CoreApplication
 import net.meatplatform.sandbox.SandboxApplication
 import net.meatplatform.sandbox.SandboxApplication.Companion.BuildConfig
 import net.meatplatform.sandbox.domain.auth.RsaCertificate

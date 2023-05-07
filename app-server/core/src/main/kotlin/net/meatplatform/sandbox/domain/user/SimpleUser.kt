@@ -4,6 +4,7 @@
  */
 package net.meatplatform.sandbox.domain.user
 
+import com.sirloin.jvmlib.util.EMPTY_UUID
 import net.meatplatform.sandbox.domain.IdHolderUUID
 import net.meatplatform.sandbox.domain.TimestampHolder
 import net.meatplatform.sandbox.domain.user.mutator.SimpleUserMutator
@@ -25,7 +26,7 @@ interface SimpleUser : IdHolderUUID, TimestampHolder {
         const val NICKNAME_SIZE_MAX = 36
 
         fun create(
-            id: UUID = UUID.randomUUID(),
+            id: UUID = EMPTY_UUID,
             nickname: String,
             profileImageUrl: String? = null,
             createdAt: Instant = TimestampHolder.EMPTY_INSTANT,

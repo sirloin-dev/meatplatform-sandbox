@@ -29,7 +29,7 @@ fun LargeTestBaseV1.createRandomUser(
     val spyProviderAuthRepository = getSpyProviderAuthRepository()
 
     val providerAuthentication = with(spyProviderAuthRepository) {
-        val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)
+        val mockProviderAuth = setProviderAuthVerified(request.authType.domainValue, request.providerAuthToken)!!
         if (mockProviderAuth.type == ProviderAuthentication.Type.EMAIL_AND_PASSWORD) {
             setFindByEmailAuthIdentity(mockProviderAuth.providerId, mockProviderAuth.password ?: "") { _, _ -> null }
         } else {

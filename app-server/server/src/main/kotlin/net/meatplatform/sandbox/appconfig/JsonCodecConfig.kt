@@ -6,6 +6,7 @@ package net.meatplatform.sandbox.appconfig
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import net.meatplatform.sandbox.appconfig.json.InstantJsonDeserializer
 import net.meatplatform.sandbox.appconfig.json.InstantJsonSerializer
@@ -27,6 +28,6 @@ internal class JsonCodecConfig(
         simpleModule.addSerializer(Instant::class.java, InstantJsonSerializer())
         simpleModule.addDeserializer(Instant::class.java, InstantJsonDeserializer())
 
-        defaultObjectMapper.registerModules(simpleModule, KotlinModule.Builder().build())
+        defaultObjectMapper.registerModules(simpleModule, JavaTimeModule(), KotlinModule.Builder().build())
     }
 }

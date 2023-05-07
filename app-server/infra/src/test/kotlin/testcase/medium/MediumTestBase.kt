@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ContextConfiguration
+import test.appConfig.InfraTestSpringContextConfig
 import test.com.sirloin.annotation.MediumTest
 
 /**
@@ -22,6 +23,7 @@ import test.com.sirloin.annotation.MediumTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)    // 환경설정에서 지정한 DB 에서 테스트 실행
 @ContextConfiguration(
     classes = [
+        InfraTestSpringContextConfig::class,
         JpaMediumTestConfig::class,
     ],
 )
@@ -33,6 +35,6 @@ class MediumTestBase {
     @Autowired
     private lateinit var _applicationContext: ApplicationContext
 
-    protected val applicationContext: ApplicationContext
+    val applicationContext: ApplicationContext
         get() = _applicationContext
 }

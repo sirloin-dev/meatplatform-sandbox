@@ -4,6 +4,7 @@
  */
 version version_app_server
 
+apply plugin: "org.jetbrains.kotlin.plugin.jpa"
 apply plugin: "org.springframework.boot"
 
 apply from: "${project.rootDir}/gradle/scripts/sourceSets.gradle"

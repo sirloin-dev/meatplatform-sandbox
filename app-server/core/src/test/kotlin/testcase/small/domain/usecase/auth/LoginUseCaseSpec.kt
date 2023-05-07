@@ -57,12 +57,10 @@ class LoginUseCaseSpec : SmallTestBase() {
         `when`(providerAuthRepository.findByEmailAuthIdentity(any(), any())).thenReturn(null)
 
         // then:
-        shouldThrow<UserByProviderAuthenticationNotFoundException> {
-            sut.getUserByProviderAuthentication(message)
-        }
+        shouldThrow<UserByProviderAuthenticationNotFoundException> { login(message) }
     }
 
-    @DisplayName("제3자 인증정보 검증 실패시 UserByProviderAuthenticationNotFoundException 이 발생한다")
+    @DisplayName("제3자 인증정보 검증 실패시 ProviderAuthenticationFailedException 이 발생한다")
     @Test
     fun errorIfThirdPartyAuthVerificationFailed() {
         // given:
@@ -74,9 +72,7 @@ class LoginUseCaseSpec : SmallTestBase() {
         )
 
         // then:
-        shouldThrow<UserByProviderAuthenticationNotFoundException> {
-            sut.getUserByProviderAuthentication(message)
-        }
+        shouldThrow<ProviderAuthenticationFailedException> { login(message) }
     }
 
     @DisplayName("Email Login 에 해당하는 Provider Auth 를 찾았을 때:")
@@ -97,9 +93,7 @@ class LoginUseCaseSpec : SmallTestBase() {
         @Test
         fun errorIfNoUserIsFound() {
             // expect:
-            shouldThrow<UserByProviderAuthenticationNotFoundException> {
-                sut.getUserByProviderAuthentication(message)
-            }
+            shouldThrow<UserByProviderAuthenticationNotFoundException> { login(message) }
         }
 
         @DisplayName("User 의 가입 이력이 있다면 User 를 반환한다.")
@@ -112,7 +106,7 @@ class LoginUseCaseSpec : SmallTestBase() {
             `when`(userRepository.findByProviderAuth(any())).thenReturn(expectedUser)
 
             // then:
-            val user = sut.getUserByProviderAuthentication(message)
+            val user = login(message)
 
             // expect:
             user shouldBe expectedUser
@@ -137,9 +131,7 @@ class LoginUseCaseSpec : SmallTestBase() {
         @Test
         fun errorIfNoUserIsFound() {
             // expect:
-            shouldThrow<UserByProviderAuthenticationNotFoundException> {
-                sut.getUserByProviderAuthentication(message)
-            }
+            shouldThrow<UserByProviderAuthenticationNotFoundException> { login(message) }
         }
 
         @DisplayName("User 의 가입 이력이 있다면 User 를 반환한다.")
@@ -152,7 +144,7 @@ class LoginUseCaseSpec : SmallTestBase() {
             `when`(userRepository.findByProviderAuth(any())).thenReturn(expectedUser)
 
             // then:
-            val user = sut.getUserByProviderAuthentication(message)
+            val user = login(message)
 
             // expect:
             user shouldBe expectedUser
@@ -174,4 +166,9 @@ class LoginUseCaseSpec : SmallTestBase() {
         type = type,
         authToken = authToken
     )
+
+    private fun login(
+        message: LoginUseCase.Message,
+        ipAddressStr: String = "localhost"
+    ): User = sut.getUserByProviderAuthentication(message, ipAddressStr)
 }

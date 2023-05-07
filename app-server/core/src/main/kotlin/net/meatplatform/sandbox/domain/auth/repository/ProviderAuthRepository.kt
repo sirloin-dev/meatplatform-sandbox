@@ -17,7 +17,7 @@ interface ProviderAuthRepository {
      */
     fun verifyProviderAuth(type: ProviderAuthentication.Type, providerAuthToken: String): ProviderAuthentication
 
-    fun findByEmailAuthIdentity(email: String, password: String): ProviderAuthentication?
+    fun findByEmailAuthIdentity(email: String, encodedPassword: String): ProviderAuthentication?
 
     fun findByProviderAuthIdentity(type: ProviderAuthentication.Type, providerId: String): ProviderAuthentication?
 

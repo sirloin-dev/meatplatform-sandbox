@@ -57,3 +57,9 @@ sandboxapp:
       windows: "https://github.dev/sirloin-dev/meatplatform-sandbox"
       linux: "https://github.dev/sirloin-dev/meatplatform-sandbox"
       macos: "https://github.dev/sirloin-dev/meatplatform-sandbox"
+
+  thirdparty:
+    google:
+      oAuthUrl: https://accounts.google.com/o/oauth2/v2/auth
+    apple:
+      oAuthUrl: https://appleid.apple.com/auth/keys

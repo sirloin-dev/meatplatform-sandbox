@@ -4,6 +4,7 @@
  */
 package net.meatplatform.sandbox.domain.user
 
+import com.sirloin.jvmlib.util.EMPTY_UUID
 import net.meatplatform.sandbox.domain.TimestampHolder
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.user.mutator.UserMutator
@@ -20,7 +21,7 @@ interface User : SimpleUser {
 
     companion object {
         fun create(
-            id: UUID = UUID.randomUUID(),
+            id: UUID = EMPTY_UUID,
             nickname: String,
             profileImageUrl: String? = null,
             authentications: Collection<ProviderAuthentication>,

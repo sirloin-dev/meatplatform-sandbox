@@ -8,21 +8,24 @@ import net.meatplatform.sandbox.annotation.UseCase
 import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
 import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
 import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase.*
+import net.meatplatform.sandbox.domain.common.AddIpAddressAuthenticationMixin
 import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.user.repository.UserRepository
 import net.meatplatform.sandbox.exception.external.auth.ProviderAuthenticationFailedException
 import net.meatplatform.sandbox.exception.external.user.UserByProviderAuthenticationNotFoundException
-import net.meatplatform.sandbox.util.PasswordEncoderMixin
+import net.meatplatform.sandbox.exception.internal.ExternalSystemFailureException
+import net.meatplatform.sandbox.util.PasswordCodecMixin
 
 /**
  * @since 2023-01-02
  */
 interface LoginUseCase {
-    fun getUserByProviderAuthentication(message: Message): User = message.run {
-        findUserByProviderAuthentication(this) ?: throw UserByProviderAuthenticationNotFoundException(type, token)
+    fun getUserByProviderAuthentication(message: Message, ipAddressStr: String): User = message.run {
+        findUserByProviderAuthentication(this, ipAddressStr)
+            ?: throw UserByProviderAuthenticationNotFoundException(type, token)
     }
 
-    fun findUserByProviderAuthentication(message: Message): User?
+    fun findUserByProviderAuthentication(message: Message, ipAddressStr: String): User?
 
     interface Message {
         val type: ProviderAuthentication.Type
@@ -48,7 +51,8 @@ interface LoginUseCase {
         init {
             when (type) {
                 ProviderAuthentication.Type.GOOGLE,
-                ProviderAuthentication.Type.APPLE -> { /* no-op */ }
+                ProviderAuthentication.Type.APPLE -> { /* no-op */
+                }
 
                 else -> throw IllegalArgumentException("'$type' is not a Third-party OAuth login type.")
             }
@@ -70,28 +74,28 @@ interface LoginUseCase {
 internal class LoginUseCaseImpl(
     private val providerAuths: ProviderAuthRepository,
     private val users: UserRepository
-) : LoginUseCase, PasswordEncoderMixin {
-    override fun findUserByProviderAuthentication(message: Message): User? {
+) : LoginUseCase, PasswordCodecMixin, AddIpAddressAuthenticationMixin {
+    override fun findUserByProviderAuthentication(message: Message, ipAddressStr: String): User? {
         val providerAuth = when (message) {
             is EmailLoginMessage -> message.run {
-                providerAuths.findByEmailAuthIdentity(email, encodeToPassword(password))
+                providerAuths.findByEmailAuthIdentity(email, encodePassword(password))
             } ?: return null
 
             is ThirdPartyAuthLoginMessage -> try {
                 message.run {
                     providerAuths.verifyProviderAuth(type, authToken)
                 }
-            } catch (e: ProviderAuthenticationFailedException) {
-                throw UserByProviderAuthenticationNotFoundException(
-                    providerType = message.type,
-                    providerToken = message.token,
-                    cause = e
-                )
+            } catch (e: Throwable) {
+                if (e is ProviderAuthenticationFailedException) {
+                    throw e
+                } else {
+                    throw ExternalSystemFailureException(cause = e)
+                }
             }
 
             else -> throw UnsupportedOperationException("'${message.type}' Login is not supported.")
         }
 
-        return users.findByProviderAuth(providerAuth)
+        return users.findByProviderAuth(providerAuth)?.addIpAddressAuthentication(ipAddressStr)
     }
 }
