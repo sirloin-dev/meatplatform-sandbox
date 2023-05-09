@@ -5,8 +5,8 @@
 package net.meatplatform.sandbox.advice
 
 import com.sirloin.jvmlib.util.SemanticVersionParser
-import net.meatplatform.sandbox.util.ClientDevicePlatform
-import net.meatplatform.sandbox.util.ClientInfo
+import net.meatplatform.sandbox.domain.auth.ClientDevicePlatform
+import net.meatplatform.sandbox.domain.auth.ClientInfo
 import java.util.*
 
 /**

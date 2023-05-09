@@ -15,7 +15,7 @@ import net.meatplatform.sandbox.SandboxApplication
 import net.meatplatform.sandbox.SandboxApplication.Companion.DEFAULT_APP_VERSION
 import net.meatplatform.sandbox.advice.UserAgentParser.APP_NAME
 import net.meatplatform.sandbox.advice.UserAgentParser.UA_DELIMITER
-import net.meatplatform.sandbox.util.ClientDevicePlatform
+import net.meatplatform.sandbox.domain.auth.ClientDevicePlatform
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.extension.ExtendWith

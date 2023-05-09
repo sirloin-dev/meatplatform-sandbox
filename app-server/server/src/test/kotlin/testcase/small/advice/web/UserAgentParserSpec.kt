@@ -9,8 +9,8 @@ import io.kotest.matchers.shouldBe
 import net.meatplatform.sandbox.advice.UserAgentParser
 import net.meatplatform.sandbox.advice.UserAgentParser.APP_NAME
 import net.meatplatform.sandbox.advice.UserAgentParser.UA_DELIMITER
-import net.meatplatform.sandbox.util.ClientDevicePlatform
-import net.meatplatform.sandbox.util.ClientInfo
+import net.meatplatform.sandbox.domain.auth.ClientDevicePlatform
+import net.meatplatform.sandbox.domain.auth.ClientInfo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

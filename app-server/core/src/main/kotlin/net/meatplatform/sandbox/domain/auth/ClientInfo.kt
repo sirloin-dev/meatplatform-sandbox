@@ -2,7 +2,7 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
-package net.meatplatform.sandbox.util
+package net.meatplatform.sandbox.domain.auth
 
 import com.sirloin.jvmlib.util.SemanticVersion
 import java.util.*
@@ -17,4 +17,3 @@ data class ClientInfo(
     val locale: Locale?,
     val timeZone: TimeZone?
 )
-

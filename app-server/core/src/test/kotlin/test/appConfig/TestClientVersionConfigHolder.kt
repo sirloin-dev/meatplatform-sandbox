@@ -6,7 +6,7 @@ package test.appConfig
 
 import com.sirloin.jvmlib.util.SemanticVersion
 import net.meatplatform.sandbox.appconfig.ClientVersionConfigHolder
-import net.meatplatform.sandbox.util.ClientDevicePlatform
+import net.meatplatform.sandbox.domain.auth.ClientDevicePlatform
 
 /**
  * @since 2023-05-07

@@ -8,5 +8,5 @@ package net.meatplatform.sandbox.endpoint.v1
  * @since 2022-12-08
  */
 object ApiVariableV1 {
-    const val id = "id"
+    const val USER_ID = "user_id"
 }

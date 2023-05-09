@@ -2,7 +2,10 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
-package net.meatplatform.sandbox.util
+package net.meatplatform.sandbox.domain.auth
+
+import net.meatplatform.sandbox.util.EnumDeserializer
+import net.meatplatform.sandbox.util.SerializableEnum
 
 /**
  * @since 2022-02-14

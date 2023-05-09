@@ -6,7 +6,7 @@ package net.meatplatform.sandbox.appconfig
 
 import com.sirloin.jvmlib.util.SemanticVersion
 import com.sirloin.jvmlib.util.SemanticVersionParser
-import net.meatplatform.sandbox.util.ClientDevicePlatform
+import net.meatplatform.sandbox.domain.auth.ClientDevicePlatform
 import org.slf4j.Logger
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value

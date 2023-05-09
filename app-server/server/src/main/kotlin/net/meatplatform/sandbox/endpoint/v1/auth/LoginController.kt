@@ -12,6 +12,7 @@ import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
 import net.meatplatform.sandbox.endpoint.v1.auth.login.LoginRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -24,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod
     consumes = [MediaType.APPLICATION_JSON_VALUE]
 )
 interface LoginController {
-    @RequestMapping(
-        path = [ApiPathsV1.AUTH_LOGIN],
-        method = [RequestMethod.POST]
-    )
+    @PostMapping(path = [ApiPathsV1.AUTH_LOGIN])
     fun loginByProviderAuth(
         @Valid @RequestBody req: LoginRequest,
         httpRequest: HttpServletRequest,

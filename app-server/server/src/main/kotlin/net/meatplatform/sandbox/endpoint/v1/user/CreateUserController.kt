@@ -13,6 +13,7 @@ import net.meatplatform.sandbox.endpoint.v1.auth.LoginController.Companion.HEADE
 import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
 import net.meatplatform.sandbox.endpoint.v1.user.create.CreateUserRequest
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -34,10 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod
     consumes = [MediaType.APPLICATION_JSON_VALUE]
 )
 interface CreateUserController {
-    @RequestMapping(
-        path = [ApiPathsV1.USER],
-        method = [RequestMethod.POST]
-    )
+    @PostMapping(path = [ApiPathsV1.USER])
     fun create(
         @Valid @RequestBody req: CreateUserRequest,
         httpRequest: HttpServletRequest,
