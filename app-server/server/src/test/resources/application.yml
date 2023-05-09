@@ -43,7 +43,9 @@ sandboxapp:
       keySize: 2048
       keyActiveSeconds: 86400
     token:
-      issuer: "net.meatplatform.sandbox"
+      issuer: "Meatplatform Sandbox App"
+      audience: "net.meatplatform.sandbox"
+      validationCacheCount: 100
       accessTokenLifeSeconds: 7200
       refreshTokenLifeSeconds: 15552000
 

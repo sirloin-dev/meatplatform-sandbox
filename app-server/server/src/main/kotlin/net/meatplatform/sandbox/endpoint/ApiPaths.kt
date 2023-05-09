@@ -10,4 +10,7 @@ package net.meatplatform.sandbox.endpoint
 object ApiPaths {
     /** Used by Spring default */
     const val ERROR = "/error"
+
+    /** Used by Spring actuator */
+    const val HEALTH = "/health"
 }

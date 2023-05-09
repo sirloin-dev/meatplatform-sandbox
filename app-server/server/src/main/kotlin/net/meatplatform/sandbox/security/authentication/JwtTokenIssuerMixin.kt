@@ -2,7 +2,7 @@
  * meatplatform-sandbox
  * Distributed under CC BY-NC-SA
  */
-package net.meatplatform.sandbox.endpoint.common
+package net.meatplatform.sandbox.security.authentication
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -15,6 +15,7 @@ import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase
 import net.meatplatform.sandbox.endpoint.v1.auth.LoginController
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.*
 
 /**
  * @since 2022-12-29
@@ -33,7 +34,7 @@ interface JwtTokenIssuerMixin {
     private fun AuthenticationTokenPayload.toJwtTokenBy(objectMapper: ObjectMapper): String {
         val jwsHeader =
             JWSHeader.Builder(JWSAlgorithm.RS256).type(JOSEObjectType.JWT)
-                .keyID(certificate.id.toString()).build()
+                .keyID(certificateId).build()
         val jsonObject = objectMapper.createObjectNode().apply {
             serialise().forEach { (k, v) ->
                 putAny(k, v)
@@ -43,7 +44,7 @@ interface JwtTokenIssuerMixin {
         val payloadStr = objectMapper.writeValueAsString(jsonObject)
 
         return JWSObject(jwsHeader, Payload(payloadStr)).run {
-            sign(RSASSASigner(certificate.privateKey))
+            sign(RSASSASigner(tokenBusiness.getCertificate(UUID.fromString(certificateId)).privateKey))
             return@run serialize()
         }
     }

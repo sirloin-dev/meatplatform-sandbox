@@ -13,7 +13,7 @@ import java.time.Instant
  * @since 2023-05-06
  */
 data class AccessTokenPayloadMutator(
-    override val certificate: RsaCertificate,
+    override val certificateId: String,
     override val issuer: String,
     override val audience: String,
     override val subject: String,

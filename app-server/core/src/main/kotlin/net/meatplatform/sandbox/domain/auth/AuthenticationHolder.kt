@@ -18,7 +18,7 @@ interface AuthenticationHolder {
 
     val authAudience: String
 
-    val authIpAddress: InetAddress
+    val authIpAddress: InetAddress?
 
     val issuedAt: Instant
 

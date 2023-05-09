@@ -65,7 +65,9 @@ sandboxapp:
       keySize: ${SANDBOXAPP_SERVER_RSA_KEY_SIZE:2048}
       keyActiveSeconds: ${SANDBOXAPP_SERVER_RSA_KEY_ACTIVE_SECONDS:86400}
     token:
-      issuer: "net.meatplatform.sandbox"
+      issuer: "Meatplatform Sandbox App"
+      audience: "net.meatplatform.sandbox"
+      validationCacheCount: ${SANDBOXAPP_SERVER_VALIDATION_CACHE_COUNT:100}
       accessTokenLifeSeconds: ${SANDBOXAPP_SERVER_ACCESS_TOKEN_LIFE_SECONDS:7200}
       refreshTokenLifeSeconds: ${SANDBOXAPP_SERVER_REFRESH_TOKEN_LIFE_SECONDS:15552000}
 

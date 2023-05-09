@@ -7,6 +7,7 @@ package net.meatplatform.sandbox
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.ComponentScan
 import java.security.Security
@@ -21,7 +22,12 @@ fun main(args: Array<String>) {
     SandboxApplication().start(args, configurationNames)
 }
 
-@SpringBootApplication
+@SpringBootApplication(
+    exclude = [
+        // Spring Security 를 커스텀할 것이기 때문에 자동설정을 비활성화한다.
+        UserDetailsServiceAutoConfiguration::class
+    ]
+)
 @ComponentScan(
     basePackages = [
         SandboxApplication.APP_PACKAGE_NAME,

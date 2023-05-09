@@ -4,14 +4,13 @@
  */
 package net.meatplatform.sandbox.appconfig.domain.usecase
 
+import net.meatplatform.sandbox.appconfig.security.AuthenticationPolicy
 import net.meatplatform.sandbox.domain.auth.repository.ProviderAuthRepository
 import net.meatplatform.sandbox.domain.auth.repository.RsaCertificateRepository
-import net.meatplatform.sandbox.domain.user.repository.UserRepository
 import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase
 import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase
-import net.meatplatform.sandbox.exception.internal.IllegalConfigValueException
+import net.meatplatform.sandbox.domain.user.repository.UserRepository
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -22,22 +21,12 @@ import org.springframework.context.annotation.Configuration
 internal class AuthBeansConfig {
     @Bean
     fun createAccessTokenUseCase(
-        @Value("\${$CONFIG_AUTH_TOKEN_ISSUER}") issuerName: String,
-        @Value("\${$CONFIG_AUTH_TOKEN_ACCESS_TOKEN_LIFE_SECONDS}") accessTokenLifeSeconds: String,
-        @Value("\${$CONFIG_AUTH_TOKEN_REFRESH_TOKEN_LIFE_SECONDS}") refreshTokenLifeSeconds: String,
+        policy: AuthenticationPolicy,
         @Qualifier(RsaCertificateRepository.NAME) rsaCertificateRepository: RsaCertificateRepository
     ) = CreateAccessTokenUseCase.newInstance(
-        issuerName = issuerName,
-        accessTokenLifeSeconds = accessTokenLifeSeconds.toLongOrNull() ?: throw IllegalConfigValueException(
-            CONFIG_AUTH_TOKEN_ACCESS_TOKEN_LIFE_SECONDS,
-            accessTokenLifeSeconds,
-            Long::class
-        ),
-        refreshTokenLifeSeconds = refreshTokenLifeSeconds.toLongOrNull() ?: throw IllegalConfigValueException(
-            CONFIG_AUTH_TOKEN_REFRESH_TOKEN_LIFE_SECONDS,
-            refreshTokenLifeSeconds,
-            Long::class
-        ),
+        issuerName = policy.issuer,
+        accessTokenLifeSeconds = policy.accessTokenLifeInSeconds,
+        refreshTokenLifeSeconds = policy.refreshTokenLifeInSeconds,
         rsaCertificateRepository = rsaCertificateRepository
     )
 
@@ -49,11 +38,4 @@ internal class AuthBeansConfig {
         providerAuthRepository = providerAuthRepository,
         userRepository = userRepository
     )
-
-    companion object {
-        private const val CONFIG_AUTH_TOKEN = "sandboxapp.authentication.token"
-        private const val CONFIG_AUTH_TOKEN_ISSUER = "$CONFIG_AUTH_TOKEN.issuer"
-        private const val CONFIG_AUTH_TOKEN_ACCESS_TOKEN_LIFE_SECONDS = "$CONFIG_AUTH_TOKEN.accessTokenLifeSeconds"
-        private const val CONFIG_AUTH_TOKEN_REFRESH_TOKEN_LIFE_SECONDS = "$CONFIG_AUTH_TOKEN.refreshTokenLifeSeconds"
-    }
 }

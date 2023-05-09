@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase
 import net.meatplatform.sandbox.domain.auth.usecase.LoginUseCase
-import net.meatplatform.sandbox.endpoint.common.JwtTokenIssuerMixin
+import net.meatplatform.sandbox.security.authentication.JwtTokenIssuerMixin
 import net.meatplatform.sandbox.endpoint.common.response.SimpleValueResponse
 import net.meatplatform.sandbox.endpoint.v1.auth.LoginController
 import net.meatplatform.sandbox.util.extractIpStr

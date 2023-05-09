@@ -5,16 +5,14 @@
 package net.meatplatform.sandbox.domain.auth.usecase
 
 import net.meatplatform.sandbox.annotation.UseCase
-import net.meatplatform.sandbox.domain.auth.AccessTokenPayload
-import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload
-import net.meatplatform.sandbox.domain.auth.ProviderAuthentication
-import net.meatplatform.sandbox.domain.auth.RefreshTokenPayload
+import net.meatplatform.sandbox.domain.auth.*
 import net.meatplatform.sandbox.domain.user.User
 import net.meatplatform.sandbox.domain.auth.repository.RsaCertificateRepository
 import net.meatplatform.sandbox.domain.auth.usecase.CreateAccessTokenUseCase.Companion.DEFAULT_AUDIENCE_NAME
 import net.meatplatform.sandbox.exception.internal.IpAuthenticationNotFoundException
 import java.net.InetAddress
 import java.time.Instant
+import java.util.*
 
 /**
  * @since 2022-12-26
@@ -28,6 +26,8 @@ interface CreateAccessTokenUseCase {
      * 2022-12 현재 IPv4 인증만 허용합니다.
      */
     fun createTokenOf(user: User): Pair<AuthenticationTokenPayload, AuthenticationTokenPayload>
+
+    fun getCertificate(certificateId: UUID): RsaCertificate
 
     companion object {
         const val DEFAULT_AUDIENCE_NAME = "meatplatform-sandbox-client"
@@ -66,7 +66,7 @@ internal class CreateAccessTokenUseCaseImpl(
          */
         val certificate = rsaCerts.findCurrentlyActive() ?: rsaCerts.save(rsaCerts.issueRandom())
         val accessToken = AccessTokenPayload.create(
-            certificate = certificate,
+            certificateId = certificate.id.toString(),
             issuer = issuerName,
             audience = DEFAULT_AUDIENCE_NAME,
             subject = subject,
@@ -75,7 +75,7 @@ internal class CreateAccessTokenUseCaseImpl(
             ipAddress = InetAddress.getByName(ipAuthentication.providerId)
         )
         val refreshToken = RefreshTokenPayload.create(
-            certificate = certificate,
+            certificateId = certificate.id.toString(),
             issuer = issuerName,
             audience = DEFAULT_AUDIENCE_NAME,
             subject = subject,
@@ -85,4 +85,6 @@ internal class CreateAccessTokenUseCaseImpl(
 
         return accessToken to refreshToken
     }
+
+    override fun getCertificate(certificateId: UUID): RsaCertificate = rsaCerts.getById(certificateId)
 }
