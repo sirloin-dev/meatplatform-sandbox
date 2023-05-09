@@ -112,7 +112,7 @@ interface JsonRequestAssertionsMixin {
                 body = jsonBody
             )
         } catch (e: Exception) {
-            log.error("responseStr = $responseStr")
+            log.error("responseStr = '$responseStr'")
             throw e
         }
     }

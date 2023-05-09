@@ -6,10 +6,10 @@ package net.meatplatform.sandbox.domain.auth
 
 import com.sirloin.jvmlib.net.isIpV4Address
 import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload.Companion.SERIALISE_KEY_AUDIENCE
-import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload.Companion.SERIALISE_KEY_ISSUED_AT
 import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload.Companion.SERIALISE_KEY_ISSUER
 import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload.Companion.SERIALISE_KEY_KEY_ID
 import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload.Companion.SERIALISE_KEY_SUBJECT
+import net.meatplatform.sandbox.domain.auth.AuthenticationTokenPayload.Companion.extractTimestamps
 import net.meatplatform.sandbox.domain.auth.mutator.AccessTokenPayloadMutator
 import java.net.InetAddress
 import java.time.Instant
@@ -21,7 +21,7 @@ interface AccessTokenPayload : AuthenticationTokenPayload {
     val ipAddress: InetAddress
 
     override fun serialise(): Map<String, Any> = HashMap(super.serialise()).apply {
-        put(SERIALISE_KEY_IPV4, ipAddress.toString())
+        put(SERIALISE_KEY_IPV4, ipAddress.hostAddress)
     }
 
     companion object {
@@ -51,30 +51,24 @@ interface AccessTokenPayload : AuthenticationTokenPayload {
             )
         }
 
-        @Suppress("ReturnCount")    // Early return 으로 불필요한 가정을 제거해 가독성을 높인다.
-        fun deserialise(serialisedMap: Map<String, Any>): AccessTokenPayload? {
-            with(serialisedMap) {
-                val certificatedId = get(SERIALISE_KEY_KEY_ID) as? String ?: return null
-                val issuer = get(SERIALISE_KEY_ISSUER) as? String ?: return null
-                val audience = get(SERIALISE_KEY_AUDIENCE) as? String ?: return null
-                val subject = get(SERIALISE_KEY_SUBJECT) as? String ?: return null
-                val issuedAt = (get(SERIALISE_KEY_ISSUED_AT) as? Number)?.toLong()?.let {
-                    Instant.ofEpochSecond(it)
-                } ?: return null
-                val expiredAt = (get(SERIALISE_KEY_ISSUED_AT) as? Number)?.toLong()?.let {
-                    Instant.ofEpochSecond(it)
-                } ?: return null
-                val ipAddress = (get(SERIALISE_KEY_IPV4) as? String)?.let { InetAddress.getByName(it) } ?: return null
+        fun deserialise(serialisedMap: Map<String, Any>): AccessTokenPayload? = with(AuthenticationTokenPayload) {
+            val authTokenPayload = serialisedMap.parse()
+            val ipAddress = (serialisedMap[SERIALISE_KEY_IPV4] as? String)?.let { InetAddress.getByName(it) }
 
-                return create(
-                    certificateId = certificatedId,
-                    issuer = issuer,
-                    audience = audience,
-                    subject = subject,
-                    issuedAt = issuedAt,
-                    expiredAt = expiredAt,
-                    ipAddress = ipAddress
-                )
+            return if (authTokenPayload != null && ipAddress != null) {
+                authTokenPayload.run {
+                    create(
+                        certificateId = certificateId,
+                        issuer = issuer,
+                        audience = audience,
+                        subject = subject,
+                        issuedAt = issuedAt,
+                        expiredAt = expiredAt,
+                        ipAddress = ipAddress
+                    )
+                }
+            } else {
+                null
             }
         }
     }

@@ -57,10 +57,10 @@ class CreateUserApiSpec : LargeTestBaseV1() {
         }
 
         // then:
-        val result = createUserApi(request)
+        val (createdUser, _) = createUserApi(request)
 
         // expect:
-        assertSimpleUserResponse(result, isReflecting = request)
+        assertSimpleUserResponse(createdUser, isReflecting = request)
     }
 
     @DisplayName("이미 가입한 이용자의 Social Login 이 일치하는 이용자를 또 생성할 수 없다.")

@@ -7,6 +7,7 @@ package net.meatplatform.sandbox.endpoint.v1.user
 import net.meatplatform.sandbox.endpoint.v1.ApiPathsV1
 import net.meatplatform.sandbox.endpoint.v1.ApiVariableV1
 import net.meatplatform.sandbox.endpoint.v1.user.common.SimpleUserResponse
+import net.meatplatform.sandbox.security.authentication.VerifiedAuthentication
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -28,5 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 )
 interface QueryUserController {
     @GetMapping(path = [ApiPathsV1.USER, ApiPathsV1.USER_USER_ID])
-    fun query(@PathVariable(ApiVariableV1.USER_ID) userId: String?): SimpleUserResponse
+    fun query(
+        @PathVariable(ApiVariableV1.USER_ID) userId: String?,
+        authentication: VerifiedAuthentication
+    ): SimpleUserResponse
 }

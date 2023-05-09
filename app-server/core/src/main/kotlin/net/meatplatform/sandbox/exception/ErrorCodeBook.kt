@@ -35,8 +35,14 @@ enum class ErrorCodeBook(
     EXTERNAL_SYSTEM_NOT_RESPONDING(
         code = "E-00000006", "외부 서비스와의 통신에 실패했습니다."
     ),
+    UNAUTHENTICATED(
+        code = "E-00000007", "인증하지 않은 클라이언트가 서비스에 접근하려 했습니다."
+    ),
+    UNAUTHORIZED(
+        code = "E-00000008", "권한 없는 자원에 클라이언트가 접근하려 했습니다."
+    ),
     AUTHENTICATION_EXPIRED(
-        code = "E-00000007", "인증이 만료됨. 클라이언트의 인증 토큰이 만료된 경우 발생합니다. " +
+        code = "E-00000009", "인증이 만료됨. 클라이언트의 인증 토큰이 만료된 경우 발생합니다. " +
                 "accessToken 을 사용했을 때 이 오류가 발생했다면, refreshToken 을 이용해 토큰을 갱신해 주시기 바랍니다. " +
                 "하지만 refreshToken 을 사용했을 때 이 오류가 발생한다면 그것은 클라이언트가 지나치게 오랫동안 서비스를 " +
                 "사용하지 않아 로그인이 완전히 풀린 상황임을 의미합니다. 이런 상황에서는 로그인을 다시 해야 합니다."

@@ -26,12 +26,13 @@ data class VerifiedAuthentication(
     override val expiredAt: Instant,
     override val clientInfo: ClientInfo?
 ) : Authentication, AuthenticationHolder {
+    private val authorities = ArrayList<GrantedAuthority>()
+
     // User Name 을 모르므로 일단은 empty string 처리한다.
     override fun getName(): String = ""
 
     // Unsupported 로 처리한 로직은 추후 필요하다면 lazy load 가능하도록 구현할 것.
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
-        throw UnsupportedOperationException("getAuthorities() is not supported")
+    override fun getAuthorities(): MutableCollection<GrantedAuthority> = authorities
 
     override fun getCredentials(): Any = throw UnsupportedOperationException("getCredentials() is not supported")
 

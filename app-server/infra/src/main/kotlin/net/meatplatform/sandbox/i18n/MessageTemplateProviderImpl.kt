@@ -34,6 +34,8 @@ internal class MessageTemplateProviderImpl : MessageTemplateProvider {
             ErrorCodeBook.UNSUPPORTED_CLIENT_VERSION -> "최소 버전 {0} 이상의 클라이언트를 이용하세요."
             ErrorCodeBook.EXTERNAL_SYSTEM_NOT_RESPONDING -> "외부 시스템으로부터의 응답이 없습니다."
             ErrorCodeBook.AUTHENTICATION_EXPIRED -> "인증이 만료되었습니다."
+            ErrorCodeBook.UNAUTHENTICATED -> "인증이 필요합니다."
+            ErrorCodeBook.UNAUTHORIZED -> "권한이 필요합니다."
             ErrorCodeBook.USER_ALREADY_REGISTERED -> "''{0}'' 은 이미 등록한 인증 정보입니다."
             ErrorCodeBook.USER_BY_PROVIDER_AUTH_NOT_FOUND -> "인증정보 ''{0}'' (''{1}'') 에 해당하는 이용자가 없습니다."
             ErrorCodeBook.EXTERNAL_PROVIDER_AUTH_VERIFICATION_FAILED -> "제 3자 로그인(''{0}'')에 실패했습니다."

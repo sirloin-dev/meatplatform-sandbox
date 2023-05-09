@@ -43,8 +43,8 @@ class SpyProviderAuthRepository(
     ): ProviderAuthentication? {
         if (type == null || providerAuthToken == null) {
             throw IllegalArgumentException(
-                "ProviderAuthentication, ProviderAuthToken 은 모두 null 이 아니어야 합니다" +
-                        "(ProviderAuthentication=$type, ProviderAuthToken=$providerAuthToken)."
+                "ProviderAuthentication.Type, ProviderAuthToken 은 모두 null 이 아니어야 합니다" +
+                        "(ProviderAuthentication.Type=$type, ProviderAuthToken=$providerAuthToken)."
             )
         }
 

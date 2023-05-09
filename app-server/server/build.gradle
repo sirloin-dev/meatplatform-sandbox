@@ -21,6 +21,7 @@ dependencies {
 
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
 
     // JWT
     implementation "com.nimbusds:nimbus-jose-jwt:$version_nimbus_jose"

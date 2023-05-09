@@ -12,11 +12,11 @@ import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import net.meatplatform.sandbox.advice.errorhandler.V1ExceptionResponseDecorator
+import net.meatplatform.sandbox.exception.external.auth.AuthenticationRequiredException
 import net.meatplatform.sandbox.security.authentication.HttpAuthenticationScheme
-import net.meatplatform.sandbox.security.authentication.HttpAuthenticationToken
-import org.springframework.http.HttpStatus
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.client.HttpClientErrorException
+import org.slf4j.Logger
+import org.springframework.http.HttpHeaders
+import org.springframework.security.web.util.matcher.RequestMatcher
 import java.util.regex.Pattern
 
 /**
@@ -30,40 +30,52 @@ import java.util.regex.Pattern
  * @since 2022-03-20
  * @see V1ExceptionResponseDecorator
  */
-internal class AuthorizationHeaderFilter : Filter {
+internal class AuthorizationHeaderFilter(
+    private val authBypassRequestMatchers: List<RequestMatcher>,
+    private val log: Logger
+) : Filter {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        val req = request as? HttpServletRequest
-        if (req != null) {
-            val authentication = findAuthorizationHeader(req)
-            if (authentication == null) {
-                val exception = HttpClientErrorException(HttpStatus.UNAUTHORIZED)
-                req.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exception)
-                // 후속 Filter 처리를 중단하려면 예외를 발생시켜야 함
-                throw exception
+        val req = (request as? HttpServletRequest)?.takeIf { r ->
+            val result = authBypassRequestMatchers.none { it.matches(r) }
+
+            if (!result) {
+                log.trace("Bypassing security check: {} {}", r.method, r.requestURI)
             }
 
-            // 이 단계에서 세팅한 authentication 객체를 HttpAuthenticationProvider 에서 활용한다.
-            SecurityContextHolder.getContext().authentication = authentication
+            return@takeIf result
+        } ?: run {
+            chain.doFilter(request, response)
+            return
+        }
+
+        // Header 있는지 정도만 검사한다. 토큰 유효성 검사는 AuthenticationProvider 에서 처리한다.
+        findAuthorizationHeader(req) ?: run {
+            log.trace("No '$HEADER_AUTH' header is found.: {} {}", req.method, req.requestURI)
+            val exception = AuthenticationRequiredException()
+            req.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exception)
+            // 후속 Filter 처리를 중단하려면 예외를 발생시켜야 함
+            throw exception
         }
 
         chain.doFilter(request, response)
     }
 
     companion object {
-        private const val HEADER = HttpAuthenticationToken.HEADER_NAME
+        private const val HEADER_AUTH: String = HttpHeaders.AUTHORIZATION
 
         private val AUTHORIZATION_SYNTAX = Pattern.compile("(?i)(" +
                 "${HttpAuthenticationScheme.BASIC.code}|" +
                 "${HttpAuthenticationScheme.BEARER.code}|" +
                 "${HttpAuthenticationScheme.TOKEN.code}) " +
-                "[A-Za-z0-9.+_-]+")
+                "[A-Za-z0-9.+_-]+"
+        )
 
         private fun findAuthorizationHeader(
             req: HttpServletRequest
-        ): HttpAuthenticationToken? = req.getHeader(HEADER)?.run {
+        ): Pair<HttpAuthenticationScheme, String>? = req.getHeader(HEADER_AUTH)?.run {
             if (matchesIn(AUTHORIZATION_SYNTAX)) {
                 split(" ").let {
-                    HttpAuthenticationToken(HttpAuthenticationScheme.from(it[0]), it[1])
+                    HttpAuthenticationScheme.from(it[0]) to it[1]
                 }
             } else {
                 null

@@ -55,7 +55,10 @@ class V1ExceptionResponseDecorator(
      */
     @RequestMapping(ApiPaths.ERROR)
     fun handleError(req: HttpServletRequest): ResponseEntity<ErrorResponseV1> {
-        (req.getAttribute(SERVLET_EXCEPTION) as? Exception)?.let { return onError(req, it) }
+        (
+            (req.getAttribute(SERVLET_EXCEPTION_LEGACY) as? Exception)
+                ?: (req.getAttribute(SERVLET_EXCEPTION) as? Exception)
+        )?.let { return onError(req, it) }
 
         val httpStatus = req.toHttpStatus()
         if (log.isErrorEnabled) {
@@ -149,7 +152,8 @@ class V1ExceptionResponseDecorator(
     }
 
     companion object {
-        private const val SERVLET_EXCEPTION = "javax.servlet.error.exception"
+        private const val SERVLET_EXCEPTION_LEGACY = "javax.servlet.error.exception"
+        private const val SERVLET_EXCEPTION = "jakarta.servlet.error.exception"
         private const val DEFAULT_ERROR_MESSAGE = "Cannot process this request."
     }
 }
